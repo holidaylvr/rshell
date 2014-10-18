@@ -44,20 +44,20 @@ int main ()
             cout << "$ ";
             getline(cin, parse);
             char del[2] = ";"; //delimiter to signal diff cmd
-            char* token=0; //point to null initially
+            char *token, *token2; //point to null initially
+            char *savptr1, *savptr2;
                            //token will be parser
             char* replace=0; //point to null
             replace = new char[parse.size()+1];
             memcpy(replace, parse.c_str(), parse.size()+1);
             
-            token = strtok(replace, del);
+            token = strtok_r(replace, del, &savptr1);
             while (token != NULL)
             {
                 //printf( " %s\n", token);
                 cout << "token: " <<  token << endl;
                 
                 string fakeTok = token;
-                cout << "faketok: " << fakeTok << endl;
 
                 char* replace2=0;
                 replace2 = new char[fakeTok.size()+1];
@@ -65,15 +65,15 @@ int main ()
                 char delim2[2] = " "; //to parse further.. take out spaces
                 memcpy(replace2, fakeTok.c_str(), fakeTok.size()+1);
                
-                char* tok2=0; 
-                tok2 = strtok(replace2, delim2);
+                token2 = strtok_r(replace2, delim2, &savptr2);
                 cout << token << endl;
-                while(tok2 != NULL)
+                while(token2 != NULL)
                 {
-                    cout << tok2 << endl;
-                    tok2 = strtok(NULL, delim2);
+                    cout << token2 << endl;
+                    token2 = strtok_r(NULL, delim2, &savptr2);
                 }
-                token = strtok(NULL, del);//inc token to next grouping
+                cout << "token: " << endl;
+                token = strtok_r(NULL, del, &savptr1);//inc token to next grouping
                 //execvp(token[0], token);
             }
 
