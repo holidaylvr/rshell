@@ -71,10 +71,28 @@ int main ()
                 while(token2 != NULL)
                 {
                     hold.push_back(token2);
-                    i++;
-                    cout << "loop: " << token2 << endl;
+                    //check doesn't work yet. Trying to ignore after #
+                    if(token2 == "-a")
+                            {   
+                                cout << "fuck" << endl;
+                                break;
+                            }
+                    //cout << "loop: " << token2 << endl;
                     token2 = strtok_r(NULL, delim2, &savptr2);
                 }
+                
+                //loop to get parsed data into array for execvp
+                char *argv[hold.size()+1];// = new char[hold.size()+1];
+                
+                for(int i=0; i<hold.size();i++)
+                {
+                   cout << "hold: " << hold.at(i) << endl;
+                   argv[i] = new char[hold.at(i).size()+1];
+                   strcpy(argv[i], hold.at(i).c_str());
+                   //cout << "size: " << hold.at(i).size() << endl;
+                }
+                execvp(argv[0], argv);
+
                 /*for(int j=0; j<hold.size(); j++)
                 {
                     cout << hold.at(j) << endl;      
