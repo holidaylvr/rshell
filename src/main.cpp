@@ -1,4 +1,5 @@
 #include<iostream>
+#include <vector>
 #include<unistd.h> //for execvp
 #include<stdio.h> //for perror
 #include<errno.h> //perror 
@@ -44,18 +45,17 @@ int main ()
             cout << "$ ";
             getline(cin, parse);
             char del[2] = ";"; //delimiter to signal diff cmd
-            char *token, *token2; //point to null initially
+            char *token, *token2;
             char *savptr1, *savptr2;
-                           //token will be parser
-            char* replace=0; //point to null
+                           
+            char* replace=0; 
             replace = new char[parse.size()+1];
             memcpy(replace, parse.c_str(), parse.size()+1);
             
             token = strtok_r(replace, del, &savptr1);
             while (token != NULL)
             {
-                //printf( " %s\n", token);
-                cout << "token: " <<  token << endl;
+                //cout << "token: " <<  token << endl;
                 
                 string fakeTok = token;
 
@@ -66,13 +66,20 @@ int main ()
                 memcpy(replace2, fakeTok.c_str(), fakeTok.size()+1);
                
                 token2 = strtok_r(replace2, delim2, &savptr2);
-                cout << token << endl;
+                vector<string> hold;
+                int i=0;
                 while(token2 != NULL)
                 {
-                    cout << token2 << endl;
+                    hold.push_back(token2);
+                    i++;
+                    cout << "loop: " << token2 << endl;
                     token2 = strtok_r(NULL, delim2, &savptr2);
                 }
-                cout << "token: " << endl;
+                /*for(int j=0; j<hold.size(); j++)
+                {
+                    cout << hold.at(j) << endl;      
+                }*/
+
                 token = strtok_r(NULL, del, &savptr1);//inc token to next grouping
                 //execvp(token[0], token);
             }
