@@ -56,7 +56,6 @@ int main ()
             while (token != NULL)
             {
                 //cout << "token: " <<  token << endl;
-                
                 string fakeTok = token;
 
                 char* replace2=0;
@@ -86,20 +85,13 @@ int main ()
                 
                 for(int i=0; i<hold.size();i++)
                 {
-                   cout << "hold: " << hold.at(i) << endl;
+                   //cout << "hold: " << hold.at(i) << endl;
                    argv[i] = new char[hold.at(i).size()+1];
                    strcpy(argv[i], hold.at(i).c_str());
-                   //cout << "size: " << hold.at(i).size() << endl;
                 }
                 execvp(argv[0], argv);
 
-                /*for(int j=0; j<hold.size(); j++)
-                {
-                    cout << hold.at(j) << endl;      
-                }*/
-
                 token = strtok_r(NULL, del, &savptr1);//inc token to next grouping
-                //execvp(token[0], token);
             }
 
                 //I need these two conditions. REMINDER
@@ -115,8 +107,5 @@ int main ()
         }
         cout << "Parent process" << endl;
     }
-    
-
-
     return 0;
 }
