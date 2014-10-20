@@ -47,10 +47,11 @@ int main ()
             memcpy(replace, parse.c_str(), parse.size()+1);
             
             token = strtok_r(replace, del, &savptr1);
-            if (token == "exit" ) 
+            cout << "token: " << endl;
+            /*if (token == "exit" ) 
              {
                 cout << "die" << endl;
-             }
+             }*/
                     
             while (token != NULL)
             {
@@ -63,6 +64,7 @@ int main ()
                 memcpy(replace2, fakeTok.c_str(), fakeTok.size()+1);
                
                 token2 = strtok_r(replace2, delim2, &savptr2);
+                
                 vector<string> hold;
                 while(token2 != NULL)
                 {
@@ -91,11 +93,13 @@ int main ()
                 }
                 else if (pid2 == 0)
                 {
-                    cout << "HERE" << endl;
+                    //cout << "HERE" << endl;
                     cout << argv[0] << endl;
-                    execvp(argv[0], argv);
-                    perror("execvp");
-                    exit(1);
+                    if( -1 == execvp(argv[0], argv))
+                    {
+                        perror("execvp");
+                        exit(1);
+                    }
                 }
                 else 
                 {   
@@ -113,10 +117,8 @@ int main ()
      }    
     else if (pid > 0)
     {   
-        int status2 = 2;
-        if( -1 == wait(&status2))
+        if( -1 == wait(0))
         {
-            if(status2 > 2) { exit(1);}
             perror("wait");
         }
         cout << "Parent process" << endl;
