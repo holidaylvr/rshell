@@ -35,9 +35,18 @@ int main ()
             {
                 perror("gethostname");
             }
+            size_t findComment;
             string parse="";
             cout << login << user <<   "$ ";
             getline(cin, parse);
+            findComment = parse.find("#");
+            //if find #, replace with null so that parsing treats it as end of array
+            if(findComment != -1)
+            {
+                parse.at(findComment) = 0;
+            }
+            cout << "Found # at pos: " << findComment << endl;
+            
             char del[] = ";"; //delimiter to signal diff cmd
             char *token, *token2;
             char *savptr1, *savptr2;
