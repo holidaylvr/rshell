@@ -40,14 +40,24 @@ int main ()
             cout << login << user <<   "$ ";
             getline(cin, parse);
             findComment = parse.find("#");
+            size_t findOr;
+            findOr = parse.find("||");
+            //cout << "find or: " << findOr << endl;
+            int orTrip=0;
+            int orFail = 0;
             //if find #, replace with null so that parsing treats it as end of array
             if(findComment != -1)
             {
+                cout << "found # at: " << findComment << endl;
                 parse.at(findComment) = 0;
             }
-            cout << "Found # at pos: " << findComment << endl;
+            if(findOr != -1)
+            {   //might be unneccessary code ! ! ! !!
+                //cout << "found || at: " << findOr << endl;
+                orTrip = 1;
+            }
             
-            char del[] = ";"; //delimiter to signal diff cmd
+            char del[] = ";||"; //delimiter to signal diff cmd
             char *token, *token2;
             char *savptr1, *savptr2;
                            
@@ -56,11 +66,7 @@ int main ()
             memcpy(replace, parse.c_str(), parse.size()+1);
             
             token = strtok_r(replace, del, &savptr1);
-            cout << "token: " << endl;
-            /*if (token == "exit" ) 
-             {
-                cout << "die" << endl;
-             }*/
+            //cout << "token: " << endl;
                     
             while (token != NULL)
             {
@@ -81,6 +87,7 @@ int main ()
                     //cout << "loop: " << token2 << endl;
                     token2 = strtok_r(NULL, delim2, &savptr2);
                 }
+
                 //loop to get parsed data into array for execvp
                 char *argv[hold.size()+1];
                 
@@ -93,17 +100,19 @@ int main ()
                    argv[i] = new char[hold.at(i).size()+1];
                    strcpy(argv[i], hold.at(i).c_str());
                 }
-                
+               
+                //fork to actuallye execute cmds 
                 int pid2 = fork();
+                int status = 0;
                 if(pid2 == -1)
                 {
-                    perror("fork inner");
+                    perror("fork");
                     exit (1);
                 }
                 else if (pid2 == 0)
                 {
-                    //cout << "HERE" << endl;
-                    cout << argv[0] << endl;
+                    //child
+                    //cout << argv[0] << endl;
                     if( -1 == execvp(argv[0], argv))
                     {
                         perror("execvp");
@@ -112,12 +121,19 @@ int main ()
                 }
                 else 
                 {   
-                    if(-1 == wait(0))
+                    //parent
+                    if(-1 == wait(&status))
                     {
                         perror("wait()");
                     }
-                    else
+                    //henry recommend 
+                    /*else if(status != 0)
                     {
+                        cout << "status changed" << endl;
+                        exit(1);
+                    }*/
+                    else
+                    {   
                         token = strtok_r(NULL, del, &savptr1);//inc token to next grouping
                     }
                 }
@@ -135,9 +151,9 @@ int main ()
     return 0;
 
     //BUGS 
-    //CANNOT enter bogus commands... shell freaks out
     //CANNOT handle connectors yet
     //outputs error messages even when cmd is successful
-    //CANNOT exit on exit
-    //CANNOT handle comments yet
+    //if I take away exit(1) after perror execvp, goes into loop for bogus cmds
+    //if I leave it, doesn't handle bogus cmds prop and just quits
+    //actually, appears to work fine. Not sure if bug or something else
 }
