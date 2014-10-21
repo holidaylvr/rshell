@@ -9,7 +9,6 @@
 #include <string.h>
 #include <stdlib.h>
 
-
 using namespace std;
 
 int main ()
@@ -31,7 +30,6 @@ int main ()
             {
                 perror("getLogin()");
             }
-
             char user[256];
             if (-1 == gethostname(user, sizeof(user)))
             {
@@ -39,6 +37,7 @@ int main ()
             }
             int findComment;
             string parse="";
+            //line outputs user info before prompt
             cout << login << user <<   "$ ";
             getline(cin, parse);
             findComment = parse.find("#");
@@ -53,24 +52,22 @@ int main ()
             {
                 parse.at(findComment) = 0;
             }
-            if(findOr != -1)
-            {   //might be unneccessary code ! ! ! !!
-                //cout << "found || at: " << findOr << endl;
+            if(findOr != -1) //signal if user input has ||
+            {  
                 orTrip = 1;
             }
-            if(findAnd != -1)
+            if(findAnd != -1) //signal if user input has && 
             {
                 andTrip = 1;
             }
-
-            
             char del[] = ";||&&"; //delimiter to signal diff cmd
             char *token, *token2;
             char *savptr1, *savptr2;
                            
             char* replace=0; 
-            replace = new char[parse.size()+1];
-            memcpy(replace, parse.c_str(), parse.size()+1);
+            replace = new char[parse.size()+2];
+            strcpy(replace, parse.c_str());
+            //memcpy(replace, parse.c_str(), parse.size()+2);
             
             token = strtok_r(replace, del, &savptr1);
             //cout << "token: " << endl;
@@ -83,7 +80,8 @@ int main ()
                 replace2 = new char[fakeTok.size()+1];
 
                 char delim2[] = " "; //to parse further.. take out spaces
-                memcpy(replace2, fakeTok.c_str(), fakeTok.size()+1);
+                //memcpy(replace2, fakeTok.c_str(), fakeTok.size()+1);
+                strcpy(replace2, fakeTok.c_str());
                
                 token2 = strtok_r(replace2, delim2, &savptr2);
                 
@@ -96,7 +94,7 @@ int main ()
                 }
 
                 //loop to get parsed data into array for execvp
-                char *argv[hold.size()+1];
+                char **argv = new char*[hold.size()+1];
                 
                 for(unsigned i=0; i<hold.size();i++)
                 {
@@ -106,11 +104,12 @@ int main ()
                    }
                    argv[i] = new char[hold.at(i).size()+1];
                    strcpy(argv[i], hold.at(i).c_str());
+                   argv[hold.size()] = 0;
                 }
-               
+
                 //fork to actually execute cmds 
                 int pid2 = fork();
-                int status, inc = 0;
+                int status = 0, orSucc = 0;
                 if(pid2 == -1)
                 {
                     perror("fork");
@@ -118,7 +117,7 @@ int main ()
                 }
                 else if (pid2 == 0)
                 {
-                   
+                    orSucc = 0;
                     if ( execvp(argv[0],argv) != -1 && orTrip == 1)
                     {
                         status = 10;
@@ -127,6 +126,7 @@ int main ()
                     else if( -1 == execvp(argv[0], argv))
                     {
                         perror("execvp");
+                        orSucc = 1;
                         if(andTrip == 1)
                         {
                             status = 10;
@@ -134,7 +134,10 @@ int main ()
                         }
                         else if(orTrip == 1)
                         {
-                            inc = 1;
+                            cout << "or cmd failed" << endl;
+                            status = 1;
+                            cout << status << endl;
+                            exit(1);
                         }
                         exit(1);
                     }
@@ -148,13 +151,19 @@ int main ()
                     }
                     else
                     {  
+                        //cout << "now I'm here " << endl;
+                        cout << "status " << status << " ortrip: " << orTrip << endl;    
                         if(status > 0 && andTrip == 1)
                         {
-                            exit(1);
+                            //exit(1);
+                            break;
+
                         }
-                        else if(inc != 1 && orTrip == 1)
+                        else if(orSucc == 0 && orTrip == 1)
                         {
-                            exit(1);
+                            cout << "broke successfully" << endl;
+                            break;
+                            //exit(1);
                         }
                         else
                         {
@@ -175,9 +184,7 @@ int main ()
     }
     return 0;
     //BUGS 
-    //CANNOT handle connectors yet
-    //outputs error messages even when cmd is successful
-    //if I take away exit(1) after perror execvp, goes into loop for bogus cmds
-    //if I leave it, doesn't handle bogus cmds prop and just quits
-    //actually, appears to work fine. Not sure if bug or something else
+    //CANNOT handle connectors yet... YEs I can. But need to not exit prog completely
+    //outputs error messages on HAmmer but not Well
+
 }
