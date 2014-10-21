@@ -7,6 +7,8 @@
 #include<sys/wait.h> //for wait
 #include<string>
 #include <string.h>
+#include <stdlib.h>
+
 
 using namespace std;
 
@@ -35,20 +37,20 @@ int main ()
             {
                 perror("gethostname");
             }
-            size_t findComment;
+            int findComment;
             string parse="";
             cout << login << user <<   "$ ";
             getline(cin, parse);
             findComment = parse.find("#");
-            size_t findOr;
+            int findOr;
+            int findAnd;
             findOr = parse.find("||");
-            //cout << "find or: " << findOr << endl;
+            findAnd = parse.find("&&");
             int orTrip=0;
-            int orFail = 0;
+            int andTrip = 0;
             //if find #, replace with null so that parsing treats it as end of array
             if(findComment != -1)
             {
-                cout << "found # at: " << findComment << endl;
                 parse.at(findComment) = 0;
             }
             if(findOr != -1)
@@ -56,8 +58,13 @@ int main ()
                 //cout << "found || at: " << findOr << endl;
                 orTrip = 1;
             }
+            if(findAnd != -1)
+            {
+                andTrip = 1;
+            }
+
             
-            char del[] = ";||"; //delimiter to signal diff cmd
+            char del[] = ";||&&"; //delimiter to signal diff cmd
             char *token, *token2;
             char *savptr1, *savptr2;
                            
@@ -101,9 +108,9 @@ int main ()
                    strcpy(argv[i], hold.at(i).c_str());
                 }
                
-                //fork to actuallye execute cmds 
+                //fork to actually execute cmds 
                 int pid2 = fork();
-                int status = 0;
+                int status, inc = 0;
                 if(pid2 == -1)
                 {
                     perror("fork");
@@ -111,30 +118,48 @@ int main ()
                 }
                 else if (pid2 == 0)
                 {
-                    //child
-                    //cout << argv[0] << endl;
-                    if( -1 == execvp(argv[0], argv))
+                   
+                    if ( execvp(argv[0],argv) != -1 && orTrip == 1)
+                    {
+                        status = 10;
+                        exit (1);
+                    }
+                    else if( -1 == execvp(argv[0], argv))
                     {
                         perror("execvp");
+                        if(andTrip == 1)
+                        {
+                            status = 10;
+                            exit(1);
+                        }
+                        else if(orTrip == 1)
+                        {
+                            inc = 1;
+                        }
                         exit(1);
                     }
                 }
                 else 
                 {   
-                    //parent
+                    int pidErr =0;
                     if(-1 == wait(&status))
-                    {
+                    {   pidErr = -1;
                         perror("wait()");
                     }
-                    //henry recommend 
-                    /*else if(status != 0)
-                    {
-                        cout << "status changed" << endl;
-                        exit(1);
-                    }*/
                     else
-                    {   
-                        token = strtok_r(NULL, del, &savptr1);//inc token to next grouping
+                    {  
+                        if(status > 0 && andTrip == 1)
+                        {
+                            exit(1);
+                        }
+                        else if(inc != 1 && orTrip == 1)
+                        {
+                            exit(1);
+                        }
+                        else
+                        {
+                            token = strtok_r(NULL, del, &savptr1);
+                        }
                     }
                 }
             }
@@ -149,7 +174,6 @@ int main ()
         cout << "Parent process" << endl;
     }
     return 0;
-
     //BUGS 
     //CANNOT handle connectors yet
     //outputs error messages even when cmd is successful
