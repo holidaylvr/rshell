@@ -1,0 +1,112 @@
+Script started on Tue 21 Oct 2014 11:11:39 PM PDT
+~
+pstar001@hammer $ cd CS100/rshell/src/[K[K[K[K[K
+~/CS100/rshell
+pstar001@hammer $ ls
+[0m[01;34mbin[0m/  LICENSE  Makefile  README.md  [01;34msrc[0m/  [01;34mtests[0m/
+[m~/CS100/rshell
+pstar001@hammer $ make
+([ ! -d bin/ ] && mkdir bin) || [ -d bin/ ] 
+g++  -W -Wall -Werror -ansi -pedantic  src/rshell.cpp -o bin/rshell
+~/CS100/rshell
+pstar001@hammer $ cd bin/
+~/CS100/rshell/bin
+pstar001@hammer $ ls
+[0m[01;32mrshell[0m*
+[m~/CS100/rshell/bin
+pstar001@hammer $ rhsell[K[K[K[K[Kshell
+pstar001hammer.cs.ucr.edu$ monkey || notValid || Dot ntw Wokr  rk || echo please wpr  ork || ls
+execvp: No such file or directory
+execvp: No such file or directory
+execvp: No such file or directory
+please work
+pstar001hammer.cs.ucr.edu$ l s  s && ls &&&& ls && pwd
+rshell
+rshell
+rshell
+/class/classes/pstar001/CS100/rshell/bin
+pstar001hammer.cs.ucr.edu$ ls || || l s  s;touch me;             ls  ;rm me ;ls
+rshell
+pstar001hammer.cs.ucr.edu$ tocuh   uch me;                 ls;rm me;ls
+me  rshell
+rshell
+pstar001hammer.cs.ucr.edu$ ls | pwd
+rshell
+/class/classes/pstar001/CS100/rshell/bin
+pstar001hammer.cs.ucr.edu$  ls              ls & pwd
+rshell
+/class/classes/pstar001/CS100/rshell/bin
+pstar001hammer.cs.ucr.edu$ ls -a -a l;ls -al; ls -a -a -a -a -a -a -l
+total 32
+drwx------ 2 pstar001 classes  4096 Oct 21 23:13 .
+drwx------ 6 pstar001 classes  4096 Oct 21 22:57 ..
+-rwx------ 1 pstar001 classes 24473 Oct 21 23:11 rshell
+total 32
+drwx------ 2 pstar001 classes  4096 Oct 21 23:13 .
+drwx------ 6 pstar001 classes  4096 Oct 21 22:57 ..
+-rwx------ 1 pstar001 classes 24473 Oct 21 23:11 rshell
+total 32
+drwx------ 2 pstar001 classes  4096 Oct 21 23:13 .
+drwx------ 6 pstar001 classes  4096 Oct 21 22:57 ..
+-rwx------ 1 pstar001 classes 24473 Oct 21 23:11 rshell
+pstar001hammer.cs.ucr.edu$ a.  rhsell     shell
+pstar001hammer.cs.ucr.edu$ rshell
+pstar001hammer.cs.ucr.edu$ rshell
+pstar001hammer.cs.ucr.edu$ rshell
+fork: Resource temporarily unavailable
+pstar001hammer.cs.ucr.edu$ exit
+pstar001hammer.cs.ucr.edu$ exit
+pstar001hammer.cs.ucr.edu$ exit
+~/CS100/rshell/bin
+pstar001@hammer $ ls
+[0m[01;32mrshell[0m*
+[m~/CS100/rshell/bin
+pstar001@hammer $ rhse[K[K[Kshell
+pstar001hammer.cs.ucr.edu$ echo I exited too far whoops
+I exited too far whoops
+pstar001hammer.cs.ucr.edu$ hi || eh cho hows the script f going
+execvp: No such file or directory
+hows the script going
+pstar001hammer.cs.ucr.edu$ Invali d  d && echo testing && mkdir  ir text  st && ls && rmdir test && ls
+execvp: No such file or directory
+pstar001hammer.cs.ucr.edu$ echo 1 && echo 2 && echo 3 
+1
+2
+3
+pstar001hammer.cs.ucr.edu$ ls;monkey  ; pwd;touch myBody;ls -al; rm myBody;ls;mk   
+rshell
+execvp: No such file or directory
+/class/classes/pstar001/CS100/rshell/bin
+total 32
+drwx------ 2 pstar001 classes  4096 Oct 21 23:16 .
+drwx------ 6 pstar001 classes  4096 Oct 21 22:57 ..
+-rw------- 1 pstar001 classes     0 Oct 21 23:16 myBody
+-rwx------ 1 pstar001 classes 24473 Oct 21 23:11 rshell
+rshell
+pstar001hammer.cs.ucr.edu$ mkdir test; touch test/meInPrivatePlaces;ls
+rshell	test
+pstar001hammer.cs.ucr.edu$ rm  cat   list test
+execvp: No such file or directory
+pstar001hammer.cs.ucr.edu$ 	q ls test
+meInPrivatePlaces
+pstar001hammer.cs.ucr.edu$ rmdir      -rf test
+pstar001hammer.cs.ucr.edu$ ls
+rshell
+pstar001hammer.cs.ucr.edu$ echo hello && #you cant see me^[[D^[[D^[[D^[[D                 e
+hello
+pstar001hammer.cs.ucr.edu$ && ls
+rshell
+pstar001hammer.cs.ucr.edu$ || ls
+rshell
+pstar001hammer.cs.ucr.edu$ ; ls
+rshell
+pstar001hammer.cs.ucr.edu$ echo test    testing > example
+testing > example
+pstar001hammer.cs.ucr.edu$ ls
+rshell
+pstar001hammer.cs.ucr.edu$ exit
+~/CS100/rshell/bin
+pstar001@hammer $ exit
+exit
+
+Script done on Tue 21 Oct 2014 11:20:32 PM PDT
