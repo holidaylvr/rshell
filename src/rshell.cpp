@@ -23,12 +23,11 @@ int main ()
     }
     else if (pid == 0)
     {
-        cout << "Child process" << endl;
         while (1)
         {   //infinite loop to run until `exit` command
             char* login = getlogin();
             //gets user info/id && prints to terminal
-            if ( 0 == getlogin())
+            if ( 0 ==  getlogin())
             {
                 perror("getLogin()");
             }
@@ -165,7 +164,6 @@ int main ()
         {
             perror("wait");
         }
-        cout << "Parent process" << endl;
     }
     return 0;
 }
