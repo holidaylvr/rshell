@@ -109,7 +109,7 @@ int main ()
 
                 //fork to actually execute cmds 
                 int pid2 = fork();
-                int status = 0, orSucc = 0;
+                int status = 0;
                 if(pid2 == -1)
                 {
                     perror("fork");
@@ -117,7 +117,6 @@ int main ()
                 }
                 else if (pid2 == 0)
                 {
-                    orSucc = 0;
                     if ( execvp(argv[0],argv) != -1 && orTrip == 1)
                     {
                         status = 10;
@@ -126,7 +125,6 @@ int main ()
                     else if( -1 == execvp(argv[0], argv))
                     {
                         perror("execvp");
-                        orSucc = 1;
                         if(andTrip == 1)
                         {
                             status = 10;
@@ -144,26 +142,28 @@ int main ()
                 }
                 else 
                 {   
-                    int pidErr =0;
                     if(-1 == wait(&status))
-                    {   pidErr = -1;
+                    {
                         perror("wait()");
                     }
                     else
                     {  
-                        //cout << "now I'm here " << endl;
-                        cout << "status " << status << " ortrip: " << orTrip << endl;    
                         if(status > 0 && andTrip == 1)
                         {
                             //exit(1);
                             break;
 
-                        }
+                        }/*
                         else if(orSucc == 0 && orTrip == 1)
                         {
                             cout << "broke successfully" << endl;
                             break;
                             //exit(1);
+                        }*/
+                        if(WEXITSTATUS(status)==0 && orTrip==1)
+                        {
+                            cout << status << "or worked " << endl;
+                            break;
                         }
                         else
                         {
@@ -183,8 +183,11 @@ int main ()
         cout << "Parent process" << endl;
     }
     return 0;
-    //BUGS 
-    //CANNOT handle connectors yet... YEs I can. But need to not exit prog completely
-    //outputs error messages on HAmmer but not Well
-
+    //BUGS
+    //can only run rshell 5 times within prog
+    //combining cmd's with only a single `&` produces slightly diff messages compared to bash
+    //cannot handle single `|`. Supposed to only perform second cmd but my rsehll performs both
+    //cannot handle multiple combintaions of `&&`. (ie: ls `&&&&' ls performs both ls cmd's in 
+    //my shell... supposed to die
+    //cannot handle `#` (or any combination) after cmd. rshell treats this as simply the cmd 
 }
