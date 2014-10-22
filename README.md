@@ -98,4 +98,8 @@ Bugs
 
 7.Cannot properly handle echo-ing into a file. (ie: `echo test > example` in my shell simply echoes the result.
 
-8.RSHELL cannot handle the command cd. We were not supposed to implement this in the assignment though. 
+8.RSHELL cannot handle the command cd. We were not supposed to implement this in the assignment though.
+
+9.Up arrow to bring up previous commands does not work. 
+
+ 
