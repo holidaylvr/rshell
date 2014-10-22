@@ -94,6 +94,6 @@ Bugs
 
 5.Cannot handle `#` (or any combination) after a cmd. RSHELL treats this simply as the cmd. Another parsing error with strtok_r()
 
-6.
+6.Cannot properly start a command string with `&&` or `||`. My shell parses too vigorously and dismisses these invalid commands. Treats such cases as if the connectors do not exist.
 
-
+7.Cannot properly handle echo-ing into a file. (ie: `echo test > example` in my shell simply echoes the result. 
