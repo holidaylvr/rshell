@@ -96,4 +96,6 @@ Bugs
 
 6.Cannot properly start a command string with `&&` or `||`. My shell parses too vigorously and dismisses these invalid commands. Treats such cases as if the connectors do not exist.
 
-7.Cannot properly handle echo-ing into a file. (ie: `echo test > example` in my shell simply echoes the result. 
+7.Cannot properly handle echo-ing into a file. (ie: `echo test > example` in my shell simply echoes the result.
+
+8.RSHELL cannot handle the command cd. We were not supposed to implement this in the assignment though. 
