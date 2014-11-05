@@ -25,8 +25,16 @@ int main(int argc, char** argv)
     {
         if(argc ==2) //this means user just entered ls alone
         {
-          
-        }
+
+            const char *dirName = "."; //must be for curr dur name
+            DIR *dirp = opendir(dirName);
+            dirent *direntp;
+            while((direntp = readdir(dirp)))
+                    cout << direntp->d_name << endl;
+            closedir(dirp);
+
+         }   
+        
     }
     return 0;
 }
