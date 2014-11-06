@@ -12,26 +12,26 @@
 
 using namespace std;
 
-bool compFunct(char *a, char *b)
+bool compFunct(dirent* a, dirent* b)
     {
         int i=0, j=0;
-        if(a[i] == '.')
+        if(a->d_name[i] == '.')
         {
 
-            while(a[i] == '.')
+            while(a->d_name[i] == '.')
             {
                 i++;  
             }
         }
-        if(b[0] == '.')
+        if(b->d_name[j] == '.')
         {
-            while(b[j] == '.')
+            while(b->d_name[j] == '.')
             {
                 j++;
             }
     
         }
-        return toupper(a[i]) < toupper(b[j]); 
+        return toupper(a->d_name[i]) < toupper(b->d_name[j]); 
     }
 
 
@@ -58,7 +58,8 @@ int main(int argc, char** argv)
                     exit(1);
             }
             dirent *direntp;
-            vector<char*> dirHold;
+            vector<dirent*> dirHold;
+            vector<dirent> dirHold2;
             while((direntp = readdir(dirp))) //put dir names into container for later sorting ease
             {
                     if(NULL == direntp)
@@ -67,19 +68,19 @@ int main(int argc, char** argv)
                         exit(1);
                     }
                     //cout << direntp->d_name << endl;
-                    dirHold.push_back(direntp->d_name);
+                    dirHold.push_back(direntp);
             }
             //cout << dirHold.at(1); 
             
             sort(dirHold.begin(), dirHold.end(), compFunct);
             for(int i = 0; i < dirHold.size(); i++)
             {
-                if(dirHold.at(i)[0] == '.')
+                if(dirHold.at(i)->d_name[0] == '.')
                 {
-                   cout << dirHold.at(i) << endl; 
+                   cout << dirHold.at(i)->d_name << '/' << endl; 
                 }
                 else
-                    cout << dirHold.at(i) << endl;
+                    cout << dirHold.at(i)->d_name << endl;
             }
 
             closedir(dirp);
