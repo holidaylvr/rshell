@@ -1,4 +1,6 @@
 #include <stdlib.h> //for exit
+#include <algorithm>
+#include <vector>
 #include <iostream>
 #include <dirent.h> //use for readdir
 #include <sys/stat.h> //use for stat
@@ -8,8 +10,30 @@
 #include <errno.h> //perror
 
 
-
 using namespace std;
+
+bool compFunct(char *a, char *b)
+    {
+        int i=0, j=0;
+        if(a[i] == '.')
+        {
+
+            while(a[i] == '.')
+            {
+                i++;  
+            }
+        }
+        if(b[0] == '.')
+        {
+            while(b[j] == '.')
+            {
+                j++;
+            }
+    
+        }
+        return toupper(a[i]) < toupper(b[j]); 
+    }
+
 
 int main(int argc, char** argv)
 {
@@ -23,14 +47,41 @@ int main(int argc, char** argv)
     }
     else
     {
-        if(argc ==2) //this means user just entered ls alone
+        if(argc >= 2) //this means user entered ls and some args
         {
-
+            
             const char *dirName = "."; //must be for curr dur name
             DIR *dirp = opendir(dirName);
+            if(dirp == NULL)
+            {
+                    perror("opendir");
+                    exit(1);
+            }
             dirent *direntp;
-            while((direntp = readdir(dirp)))
-                    cout << direntp->d_name << endl;
+            vector<char*> dirHold;
+            while((direntp = readdir(dirp))) //put dir names into container for later sorting ease
+            {
+                    if(NULL == direntp)
+                    {
+                        perror("readdir");
+                        exit(1);
+                    }
+                    //cout << direntp->d_name << endl;
+                    dirHold.push_back(direntp->d_name);
+            }
+            //cout << dirHold.at(1); 
+            
+            sort(dirHold.begin(), dirHold.end(), compFunct);
+            for(int i = 0; i < dirHold.size(); i++)
+            {
+                if(dirHold.at(i)[0] == '.')
+                {
+                   cout << dirHold.at(i) << endl; 
+                }
+                else
+                    cout << dirHold.at(i) << endl;
+            }
+
             closedir(dirp);
 
          }   
@@ -38,3 +89,10 @@ int main(int argc, char** argv)
     }
     return 0;
 }
+
+
+
+
+
+
+
