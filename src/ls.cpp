@@ -74,6 +74,7 @@ int main(int argc, char** argv)
                 {
                     if(argv[i][0] == '/')
                     {
+                        //cerr << "I pushed: " << argv[i] << endl;
                         pathHold.push_back(argv[i]);
                     }
                     if(argv[2][0] == '-')
@@ -115,13 +116,15 @@ int main(int argc, char** argv)
                         }
                         flagHold.clear();
                     }
-                    else
-                            pathHold.push_back(argv[i]);
-                    
+                    //else
+                    //        pathHold.push_back(argv[i]);
+//--> SHOULD REMEDY DOUBLE PRINT
                 }
             }
             
             //THIS SHOULD BE IN LOOP... B/c IF USER ENTERS MULTIPLE PATHS
+            cout << "path size: ";
+            cout << pathHold.size() << endl;
             for(int i=0; i < pathHold.size(); i++)
             {
                 DIR *dirp = opendir(pathHold.at(i));
@@ -145,34 +148,97 @@ int main(int argc, char** argv)
                 //cout << dirHold.at(1); 
                 //cerr << "a flag " << aFlag << endl; 
                 sort(dirHold.begin(), dirHold.end(), compFunct);
-                for(int i = 0; i < dirHold.size(); i++)
+//--> WE GO HERE TWICE??                cout << dirHold.size() << endl;
+                for(int i=0, exFlag=0, dFlag=0; i < dirHold.size(); i++, exFlag=0, dFlag=0)
                 {
-                    if(dirHold.at(i)->d_name[0] == '.') //&& -a flag
+                    if(dirHold.at(i)->d_name[0] == '.') //signals hidden files
                     {
-                        //cerr << "do I even go here " << endl;
-                        //cerr << "a flag again" << aFlag << endl;
                         if(aFlag != 0 ) //hidden files
                         {
-
-                            //cerr << "came here for: " << dirHold.at(i)->d_name << endl;
                             if(lFlag !=0) //list file properties
                             {
+                                //I know super inefficiency in code... But It's barely working atm
+                                //So I'm keeping it indefinitely
                                 struct stat statbuf;
-                                stat(dirHold.at(i)->d_name, &statbuf);
-                                if(S_ISDIR(statbuf.st_mode))
-                                {
-                                    cout << 'd';
+                                if(-1 == stat(dirHold.at(i)->d_name, &statbuf)) {
+                                        perror("stat");
+                                        exit(1);
                                 }
-                                cout << dirHold.at(i)->d_name << '/' << endl;
+                                if(S_ISDIR(statbuf.st_mode)) { //dir flag
+                                    cout << 'd';
+                                    dFlag = 1;
+                                }
+                                else if(S_ISLNK(statbuf.st_mode)) { //symbolic link flag
+                                    cout << 'l';
+                                }else {
+                                    cout << '-';
+                                }
+                                if(S_IRUSR & statbuf.st_mode) { //user perm start here
+                                    cout << 'r';
+                                }else
+                                    cout << '-';
+                                if(S_IWUSR & statbuf.st_mode) {
+                                    cout << 'w';
+                                }else
+                                    cout << '-';
+                                if(S_IXUSR & statbuf.st_mode) {
+                                    cout << 'x';
+                                    exFlag =1;
+                                }else
+                                    cout << '-';
+                                if(S_IRGRP & statbuf.st_mode) { //group perm start here
+                                    cout << 'r';
+                                } else 
+                                    cout << '-';
+                                if(S_IRGRP & statbuf.st_mode) {
+                                    cout << 'w';
+                                }
+                                else
+                                    cout << '-';
+                                if(S_IXGRP & statbuf.st_mode) {
+                                    cout << 'x';
+                                }else
+                                    cout << '-';
+                                if(S_IROTH & statbuf.st_mode) { //other perm start here
+                                    cout << 'r';
+                                } else 
+                                    cout << '-';
+                                if(S_IROTH & statbuf.st_mode) {
+                                    cout << 'w';
+                                }
+                                else
+                                    cout << '-';
+                                if(S_IXOTH & statbuf.st_mode) {
+                                    cout << "x ";
+                                }else
+                                    cout << "- ";
+                                int n = 80;
+                                std::cout <<  std::left << statbuf.st_nlink << ' ';
+                                cout << statbuf.st_uid << ' ';
+                                cout << statbuf.st_gid << ' ';
+                                std::cout.width(5); std::cout << std::right <<  statbuf.st_size << ' ';
+                                cout << statbuf.st_mtime << ' ';
+                                cout << statbuf.st_atime << ' ';
+                                //cout << dirHold.at(i)->d_name << '/' << endl;
                             }
-                             //   cout << dirHold.at(i)->d_name << '/' << endl; 
+                                //cout << "so I didn't go above here.." << endl;
+                                cout << dirHold.at(i)->d_name << '/' << endl; 
                         }
                     }
-                    else if(dirHold.at(i)->d_name[0] != '.')
+                    else if(dirHold.at(i)->d_name[0] != '.') //normal dir
                     {
+                        /*struct stat statbuf;
+                        if(-1 == stat(dirHold.at(i)->d_name, &statbuf)){
+                                perror("stat");
+                                exit(1);
+                        }*/
+                        
+
+
                         if(lFlag !=0) //list all attributes of -l flag 
                         {
                             struct stat statbuf;
+                            //int exFlag=0, dFlag=0;
                             if( -1 == stat(dirHold.at(i)->d_name, &statbuf)) {
                                     perror("stat");
                                     exit (1);
@@ -180,6 +246,7 @@ int main(int argc, char** argv)
                             //first attributes are the permissions for user, group, & other 
                             if(S_ISDIR(statbuf.st_mode)) { //dir flag
                                 cout << 'd';
+                                dFlag = 1;
                             }
                             else if(S_ISLNK(statbuf.st_mode)) { //symbolic link flag
                                 cout << 'l';
@@ -196,6 +263,7 @@ int main(int argc, char** argv)
                                     cout << '-';
                             if(S_IXUSR & statbuf.st_mode) {
                                 cout << 'x';
+                                exFlag =1;
                             }else
                                 cout << '-';
                             if(S_IRGRP & statbuf.st_mode) { //group perm start here
@@ -221,14 +289,31 @@ int main(int argc, char** argv)
                             else
                                 cout << '-';
                             if(S_IXOTH & statbuf.st_mode) {
-                                cout << 'x';
+                                cout << "x ";
                             }else
-                                cout << '-';
+                                cout << "- ";
+                            int n = 80;
+                            std::cout <<  std::left << statbuf.st_nlink << ' ';
+                            cout << statbuf.st_uid << ' ';
+                            cout << statbuf.st_gid << ' ';
+                            std::cout.width(5); std::cout << std::right <<  statbuf.st_size << ' ';
+                            cout << statbuf.st_mtime << ' ';
+                            cout << statbuf.st_atime << ' ';
+
 
                             
 
                         }
-                        cout << dirHold.at(i)->d_name << endl;
+                        
+
+                        cout << dirHold.at(i)->d_name;
+                        if(dFlag !=0) {
+                            cout << '/' << endl;
+                        }
+                        else if (exFlag!=0) {
+                            cout << '*' << endl;
+                        }
+                        else cout << endl;
                     }
                 }
 
