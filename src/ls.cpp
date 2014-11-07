@@ -76,17 +76,20 @@ int main(int argc, char** argv)
                     {
                         pathHold.push_back(argv[i]);
                     }
+                    if(argv[2][0] == '-')
+                    {
+                        pathHold.push_back(dot);
+                    }
                     if(argv[i][0] == '-')
                     {
                         flagHold.push_back(argv[i]);
-                        //cerr << "Pushed flag " << endl;
+                 //       cerr << "Pushed flag " << flagHold.at(0) << endl;
 
                         for(int j=0; j < flagHold.size();  j++)
                         {
                             //for(int k=0; flagHold.at(i)[k] != "\0"; k++)
                             //{
-                                string finda = "a";
-                                const char* ach;
+                                const char* ach =0;
                                 const char* lch;
                                 const char* rch;
                                 ach = strrchr(flagHold.at(j), 'a');
@@ -99,7 +102,7 @@ int main(int argc, char** argv)
                                 }
                                 if(lch != 0)
                                 {
-                                    aFlag =1;
+                                    lFlag =1;
                                     cerr << "l flag set" << endl; 
                                 }
                                 if(rch!=0)
@@ -108,10 +111,12 @@ int main(int argc, char** argv)
                                     cerr << "r flag set" << endl;
 
                                 }
-                            //}
+                            
                         }
                         flagHold.clear();
                     }
+                    else
+                            pathHold.push_back(argv[i]);
                     
                 }
             }
@@ -138,16 +143,43 @@ int main(int argc, char** argv)
                     dirHold.push_back(direntp);
                 }
                 //cout << dirHold.at(1); 
-            
+                //cerr << "a flag " << aFlag << endl; 
                 sort(dirHold.begin(), dirHold.end(), compFunct);
                 for(int i = 0; i < dirHold.size(); i++)
                 {
                     if(dirHold.at(i)->d_name[0] == '.') //&& -a flag
                     {
-                        cout << dirHold.at(i)->d_name << '/' << endl; 
+                        //cerr << "do I even go here " << endl;
+                        //cerr << "a flag again" << aFlag << endl;
+                        if(aFlag != 0 ) //hidden files
+                        {
+
+                            //cerr << "came here for: " << dirHold.at(i)->d_name << endl;
+                            if(lFlag !=0) //list file properties
+                            {
+                                struct stat statbuf;
+                                stat(dirHold.at(i)->d_name, &statbuf);
+                                if(S_ISDIR(statbuf.st_mode))
+                                {
+                                    cout << 'd';
+                                }
+                                cout << dirHold.at(i)->d_name << '/' << endl;
+                            }
+                           // else
+                             //   cout << dirHold.at(i)->d_name << '/' << endl; 
+                        }
                     }
-                    else
+                    else if(dirHold.at(i)->d_name[0] != '.')
+                    {
+                        if(lFlag !=0)
+                        {
+                            struct stat statbuf;
+                            stat(dirHold.at(i)->d_name, &statbuf);
+                            if(S_ISDIR(statbuf.st_mode))
+                                cout << 'd';
+                        }
                         cout << dirHold.at(i)->d_name << endl;
+                    }
                 }
 
                 closedir(dirp);
