@@ -165,18 +165,68 @@ int main(int argc, char** argv)
                                 }
                                 cout << dirHold.at(i)->d_name << '/' << endl;
                             }
-                           // else
                              //   cout << dirHold.at(i)->d_name << '/' << endl; 
                         }
                     }
                     else if(dirHold.at(i)->d_name[0] != '.')
                     {
-                        if(lFlag !=0)
+                        if(lFlag !=0) //list all attributes of -l flag 
                         {
                             struct stat statbuf;
-                            stat(dirHold.at(i)->d_name, &statbuf);
-                            if(S_ISDIR(statbuf.st_mode))
+                            if( -1 == stat(dirHold.at(i)->d_name, &statbuf)) {
+                                    perror("stat");
+                                    exit (1);
+                            }
+                            //first attributes are the permissions for user, group, & other 
+                            if(S_ISDIR(statbuf.st_mode)) { //dir flag
                                 cout << 'd';
+                            }
+                            else if(S_ISLNK(statbuf.st_mode)) { //symbolic link flag
+                                cout << 'l';
+                            }else {
+                                cout << '-';
+                            }
+                            if(S_IRUSR & statbuf.st_mode) { //user perm start here
+                                cout << 'r';
+                            }else
+                                cout << '-';
+                            if(S_IWUSR & statbuf.st_mode) {
+                                cout << 'w';
+                            }else
+                                    cout << '-';
+                            if(S_IXUSR & statbuf.st_mode) {
+                                cout << 'x';
+                            }else
+                                cout << '-';
+                            if(S_IRGRP & statbuf.st_mode) { //group perm start here
+                                cout << 'r';
+                            } else 
+                                cout << '-';
+                            if(S_IRGRP & statbuf.st_mode) {
+                                cout << 'w';
+                            }
+                            else
+                                cout << '-';
+                            if(S_IXGRP & statbuf.st_mode) {
+                                cout << 'x';
+                            }else
+                                cout << '-';
+                            if(S_IROTH & statbuf.st_mode) { //other perm start here
+                                cout << 'r';
+                            } else 
+                                cout << '-';
+                            if(S_IROTH & statbuf.st_mode) {
+                                cout << 'w';
+                            }
+                            else
+                                cout << '-';
+                            if(S_IXOTH & statbuf.st_mode) {
+                                cout << 'x';
+                            }else
+                                cout << '-';
+
+                            
+
                         }
                         cout << dirHold.at(i)->d_name << endl;
                     }
