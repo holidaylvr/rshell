@@ -1,4 +1,6 @@
 #include <stdlib.h> //for exit
+#include <string>
+#include <string.h>
 #include <algorithm>
 #include <vector>
 #include <iostream>
@@ -77,35 +79,41 @@ int main(int argc, char** argv)
                     if(argv[i][0] == '-')
                     {
                         flagHold.push_back(argv[i]);
-                        cerr << "Pushed flag " << endl;
+                        //cerr << "Pushed flag " << endl;
 
-                        for(int j=0, k=1; j < flagHold.size(); j++,k++)
+                        for(int j=0; j < flagHold.size();  j++)
                         {
-                            if(flagHold.at(j)[k] == 'a')
-                            {
-                                aFlag =1;
-                                cerr << "a flag set" << endl; 
-                            }
-                            if(flagHold.at(j)[k]=='R')
-                            {
-                                rFlag=1;
-                                cerr << "r flag set" << endl;
+                            //for(int k=0; flagHold.at(i)[k] != "\0"; k++)
+                            //{
+                                string finda = "a";
+                                const char* ach;
+                                const char* lch;
+                                const char* rch;
+                                ach = strrchr(flagHold.at(j), 'a');
+                                lch = strrchr(flagHold.at(j), 'l');
+                                rch = strrchr(flagHold.at(j), 'R');
+                                if(ach != 0)
+                                {
+                                        aFlag = 1;
+                                        cerr << "a flag set " << endl;
+                                }
+                                if(lch != 0)
+                                {
+                                    aFlag =1;
+                                    cerr << "l flag set" << endl; 
+                                }
+                                if(rch!=0)
+                                {
+                                    rFlag=1;
+                                    cerr << "r flag set" << endl;
 
-                            }
-                            if(flagHold.at(j)[k]=='l')
-                            {
-                                lFlag=1;
-                                cerr << "l flag set" << endl;
-
-                            }
-                            //cerr << "Sup " << endl;
+                                }
+                            //}
                         }
                         flagHold.clear();
                     }
                     
                 }
-                //dirName = argv[2]; //-- ./a.out ls path
-                                   //to assign path properly
             }
             
             //THIS SHOULD BE IN LOOP... B/c IF USER ENTERS MULTIPLE PATHS
