@@ -1,4 +1,6 @@
 #include <stdlib.h> //for exit
+#include <iomanip> //for formatting
+#include <time.h> //for time formatting
 #include <string>
 #include <string.h>
 #include <algorithm>
@@ -9,6 +11,8 @@
 #include <sys/types.h> //use for stat
 #include <unistd.h> //use for stat
 #include <stdio.h> //for perror
+#include <pwd.h> // for getpwuid
+#include <grp.h> //for getgrgid
 #include <errno.h> //perror
 
 
@@ -149,17 +153,34 @@ int main(int argc, char** argv)
                 //cerr << "a flag " << aFlag << endl; 
                 sort(dirHold.begin(), dirHold.end(), compFunct);
 //--> WE GO HERE TWICE??                cout << dirHold.size() << endl;
+                char timeStr[200];
+                time_t t;
+                struct tm *tmp;
                 for(int i=0, exFlag=0, dFlag=0; i < dirHold.size(); i++, exFlag=0, dFlag=0)
                 {
                     if(dirHold.at(i)->d_name[0] == '.') //signals hidden files
                     {
                         if(aFlag != 0 ) //hidden files
                         {
+                        struct stat statbuf;
+                                
+                        if(-1 == stat(dirHold.at(i)->d_name, &statbuf)) {
+                            perror("stat");
+                            exit(1);
+                        }
+                            if(S_ISDIR(statbuf.st_mode)){
+                                    dFlag=1;
+                            }
+                            if(S_IXUSR & statbuf.st_mode || S_IXOTH & statbuf.st_mode){
+                                    exFlag=1;
+                            }
+
                             if(lFlag !=0) //list file properties
                             {
                                 //I know super inefficiency in code... But It's barely working atm
                                 //So I'm keeping it indefinitely
                                 struct stat statbuf;
+                                
                                 if(-1 == stat(dirHold.at(i)->d_name, &statbuf)) {
                                         perror("stat");
                                         exit(1);
@@ -214,27 +235,50 @@ int main(int argc, char** argv)
                                     cout << "- ";
                                 int n = 80;
                                 std::cout <<  std::left << statbuf.st_nlink << ' ';
-                                cout << statbuf.st_uid << ' ';
-                                cout << statbuf.st_gid << ' ';
+                                struct passwd *getUID;
+                                if((getUID = getpwuid(statbuf.st_uid)) == 0 ){
+                                        perror("getpwuid");
+                                        exit(1);
+                                }
+                                struct group* groupID;
+                                if((groupID = getgrgid(statbuf.st_gid)) == 0){
+                                        perror("getgrgid");
+                                        exit(1);
+                                }
+
+
+
+                                cout << getUID->pw_name << ' ';
+                                cout << groupID->gr_name << ' ';
                                 std::cout.width(5); std::cout << std::right <<  statbuf.st_size << ' ';
-                                cout << statbuf.st_mtime << ' ';
-                                cout << statbuf.st_atime << ' ';
+                                tmp = localtime(&statbuf.st_mtime);
+                                if(strftime(timeStr, 200 , "%b %d %k:%M ", tmp) ==0){
+                                        perror("strftime");
+                                        exit(1);
+                                }
+                                cout << timeStr ;
+                                
                                 //cout << dirHold.at(i)->d_name << '/' << endl;
                             }
                                 //cout << "so I didn't go above here.." << endl;
-                                cout << dirHold.at(i)->d_name << '/' << endl; 
+                            cout << dirHold.at(i)->d_name << '/' << endl; 
                         }
                     }
                     else if(dirHold.at(i)->d_name[0] != '.') //normal dir
                     {
-                        /*struct stat statbuf;
-                        if(-1 == stat(dirHold.at(i)->d_name, &statbuf)){
-                                perror("stat");
-                                exit(1);
-                        }*/
+                        struct stat statbuf;
+                        if( -1 == stat(dirHold.at(i)->d_name, &statbuf)) {
+                                    perror("stat");
+                                    exit (1);
+                        }    
+                        if(S_ISDIR(statbuf.st_mode)){
+                               dFlag=1;
+                        }
+                        if(S_IXUSR & statbuf.st_mode || S_IXOTH & statbuf.st_mode){
+                               exFlag=1;
+                        }
                         
-
-
+                        
                         if(lFlag !=0) //list all attributes of -l flag 
                         {
                             struct stat statbuf;
@@ -293,12 +337,39 @@ int main(int argc, char** argv)
                             }else
                                 cout << "- ";
                             int n = 80;
+                            struct passwd* getUID;
+                            if((getUID = getpwuid(statbuf.st_uid)) == 0){
+                                    perror("getpwuid");
+                                    exit(1);
+                            }
+                            struct group* groupID;
+                            if((groupID = getgrgid(statbuf.st_gid)) == 0){
+                                    perror("getgrgid");
+                                    exit(1);
+                            }
                             std::cout <<  std::left << statbuf.st_nlink << ' ';
-                            cout << statbuf.st_uid << ' ';
-                            cout << statbuf.st_gid << ' ';
-                            std::cout.width(5); std::cout << std::right <<  statbuf.st_size << ' ';
-                            cout << statbuf.st_mtime << ' ';
-                            cout << statbuf.st_atime << ' ';
+                            cout << getUID->pw_name << ' ';
+                            //cout << statbuf.st_uid << ' ';
+                            cout << groupID->gr_name <<  ' ';
+                            /*int numDig=0;
+                            off_t size=statbuf.st_size;
+                            while (size>0){
+                                    ++numDig;
+                                    size/=10;
+                            }*/ //idea to find size for formatting.. flawed
+                            
+                            cout << setw(6); std::cout << std::right <<  statbuf.st_size << ' ';
+                            char timeStr[200];
+                            struct tm* tmp;
+                            tmp = localtime(&statbuf.st_mtime);
+                            if(strftime(timeStr, 200 , "%b %d %k:%M ", tmp)==0){
+                                perror("strftime"); 
+                                exit(1);
+                            }
+                            cout << timeStr;
+
+                            
+                                //cout << statbuf.st_mtime << ' ';
 
 
                             
