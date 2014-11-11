@@ -8,16 +8,27 @@ Project source can be downloaded from https://github.com/holidaylvr/rshell.git
 
 Author & Contributor List
 -----------
+<<<<<<< HEAD
 Paul Starkey
 
 All other known bugs and fixes can be sent to holidaylvr@ucr.edu
+=======
+Mike Izbicki
+
+Paul Starkey
+
+All other known bugs and fixs can be sent to pstar001@ucr.edu
+>>>>>>> 99c084abea63069fd08fdd76b259bcf1424cd68f
 
 Reported bugs/fixes will be submitted to correction upon validation.
 
 File List
 ---------
 ```
+<<<<<<< HEAD
 .:
+=======
+>>>>>>> 99c084abea63069fd08fdd76b259bcf1424cd68f
 
 Makefile
 
@@ -34,6 +45,7 @@ README.md
 
 main.cpp
 
+<<<<<<< HEAD
 ```
 ```
 ./tests:
@@ -101,5 +113,39 @@ Bugs
 8.RSHELL cannot handle the command cd. We were not supposed to implement this in the assignment though.
 
 9.Up arrow to bring up previous commands does not work. 
+=======
+``` 
+``` 
+./tests:
+
+exec.script
+
+```
+
+How to run file
+---------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+>>>>>>> 99c084abea63069fd08fdd76b259bcf1424cd68f
 
  
