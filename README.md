@@ -10,14 +10,13 @@ Author & Contributor List
 -----------
 Paul Starkey
 
-All other known bugs and fixes can be sent to holidaylvr@ucr.edu
+All other known bugs and fixs can be sent to pstar001@ucr.edu
 
 Reported bugs/fixes will be submitted to correction upon validation.
 
 File List
 ---------
 ```
-.:
 
 Makefile
 
@@ -101,5 +100,27 @@ Bugs
 8.RSHELL cannot handle the command cd. We were not supposed to implement this in the assignment though.
 
 9.Up arrow to bring up previous commands does not work. 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
  
