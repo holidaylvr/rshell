@@ -101,26 +101,3 @@ Bugs
 
 9.Up arrow to bring up previous commands does not work. 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
- 
