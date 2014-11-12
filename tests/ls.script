@@ -1,0 +1,200 @@
+Script started on Tue 11 Nov 2014 11:42:45 PM PST
+~
+pstar001@hammer $ cd CS100/rshell/
+~/CS100/rshell
+pstar001@hammer $ make
+([ ! -d bin/ ] && mkdir bin) || [ -d bin/ ] 
+g++  -W -Wall -Werror -ansi -pedantic  src/rshell.cpp -o bin/rshell
+([ ! -d bin/ ] && mkdir bin) || [ -d bin/ ]
+g++  -W -Wall -Werror -ansi -pedantic  src/cp.cpp -o bin/cp
+([ ! -d bin/ ] && mkdir bin) || [ -d bin/ ]
+g++  -W -Wall -Werror -ansi -pedantic  src/ls.cpp -o bin/ls
+~/CS100/rshell
+pstar001@hammer $ bin/ls 
+Segmentation fault
+~/CS100/rshell
+pstar001@hammer $ bin/ls ls
+bin/       LICENSE    Makefile   README.md  src/       tests/     
+
+~/CS100/rshell
+pstar001@hammer $ bin/ls ls -a
+./         ../        bin/       .git/      LICENSE    Makefile   README.md  
+src/       tests/     
+
+
+~/CS100/rshell
+pstar001@hammer $ bin/ls ls -al
+total 52
+drwx------ 6    pstar001 classes     4096 Nov 11 23:35 ./
+drwx------ 6    pstar001 classes     4096 Oct 20 10:13 ../
+drwx------ 2    pstar001 classes     4096 Nov 11 23:42 bin/
+drwx------ 8    pstar001 classes     4096 Nov 11 23:40 .git/
+-rw------- 1    pstar001 classes    18027 Oct 14 20:02 LICENSE
+-rw------- 1    pstar001 classes      425 Nov 11 23:33 Makefile
+-rw------- 1    pstar001 classes     3541 Nov 11 23:20 README.md
+drwx------ 3    pstar001 classes     4096 Nov 11 23:41 src/
+drwx------ 2    pstar001 classes     4096 Nov 11 23:41 tests/
+
+
+~/CS100/rshell
+pstar001@hammer $ bin/ls ls -al l-l
+~/CS100/rshell
+pstar001@hammer $ bin/ls ls -a -l[C[C[K[K~/CS100/rshell/src/ fake.cpp
+stat:124: No such file or directory
+
+
+./          ../         cp.cpp      ls.cpp      main.cpp    rshell.cpp  
+TESTDIR/    test.cpp    Timer.h     
+
+
+~/CS100/rshell
+pstar001@hammer $ bin/ls ls -a ~/CS100/rshell/src/ fake.cpp -l
+stat:124: No such file or directory
+
+total 68
+drwx------ 3    pstar001 classes     4096 Nov 11 23:41 ./
+drwx------ 6    pstar001 classes     4096 Nov 11 23:35 ../
+-rw------- 1    pstar001 classes     3168 Nov 11 23:36 cp.cpp
+-rw------- 1    pstar001 classes    25708 Nov 11 23:41 ls.cpp
+-rw------- 1    pstar001 classes     6335 Oct 21 23:29 main.cpp
+-rw------- 1    pstar001 classes     5232 Nov 11 17:10 rshell.cpp
+drwx------ 2    pstar001 classes     4096 Nov 11 23:31 TESTDIR/
+-rw------- 1    pstar001 classes      370 Nov 11 23:20 test.cpp
+-rw------- 1    pstar001 classes     2697 Nov 11 23:24 Timer.h
+
+
+~/CS100/rshell
+pstar001@hammer $ bin/ls ls -a ~/CS100/rshell/src/ fake.cpp -l Makefile 
+stat:124: No such file or directory
+-rw------- 1 pstar001 classes   425 Nov 11 23:33 Makefile
+
+total 68
+drwx------ 3    pstar001 classes     4096 Nov 11 23:41 ./
+drwx------ 6    pstar001 classes     4096 Nov 11 23:35 ../
+-rw------- 1    pstar001 classes     3168 Nov 11 23:36 cp.cpp
+-rw------- 1    pstar001 classes    25708 Nov 11 23:41 ls.cpp
+-rw------- 1    pstar001 classes     6335 Oct 21 23:29 main.cpp
+-rw------- 1    pstar001 classes     5232 Nov 11 17:10 rshell.cpp
+drwx------ 2    pstar001 classes     4096 Nov 11 23:31 TESTDIR/
+-rw------- 1    pstar001 classes      370 Nov 11 23:20 test.cpp
+-rw------- 1    pstar001 classes     2697 Nov 11 23:24 Timer.h
+
+
+~/CS100/rshell
+pstar001@hammer $ bin/ls ls -a ~/CS100/rshell/src/ fake.cpp -l Makefile [K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[KREADME.md -a ~/CS100/rshell/ -l ~/CS100/ fake.cpp
+stat:124: No such file or directory
+-rw------- 1 pstar001 classes  3541 Nov 11 23:20 README.md
+
+/class/classes/pstar001/CS100/rshell/:
+total 52
+drwx------ 6    pstar001 classes     4096 Nov 11 23:35 ./
+drwx------ 6    pstar001 classes     4096 Oct 20 10:13 ../
+drwx------ 2    pstar001 classes     4096 Nov 11 23:42 bin/
+drwx------ 8    pstar001 classes     4096 Nov 11 23:40 .git/
+-rw------- 1    pstar001 classes    18027 Oct 14 20:02 LICENSE
+-rw------- 1    pstar001 classes      425 Nov 11 23:33 Makefile
+-rw------- 1    pstar001 classes     3541 Nov 11 23:20 README.md
+drwx------ 3    pstar001 classes     4096 Nov 11 23:41 src/
+drwx------ 2    pstar001 classes     4096 Nov 11 23:41 tests/
+
+
+/class/classes/pstar001/CS100/:
+total 48
+drwx------ 6    pstar001 classes     4096 Oct 20 10:13 ./
+drwx------ 61   pstar001 classes    28672 Nov 11 23:41 ../
+drwx------ 3    pstar001 classes     4096 Oct 13  8:58 firstrepo/
+drwx------ 2    pstar001 classes     4096 Oct 20 10:14 fork/
+drwx------ 6    pstar001 classes     4096 Nov 11 23:35 rshell/
+drwx------ 8    pstar001 classes     4096 Oct 15 16:28 ucr-cs100/
+
+
+~/CS100/rshell
+pstar001@hammer $ bin/ls ls README.md -a ~/CS100/rshell/ -l ~/CS100/ fake.cpp[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[Kcd src/
+~/CS100/rshell/src
+pstar001@hammer $ ../bin/ls ~/Dow[K[K[KDownloads main.cpp -a al[K[Kl
+bash: command not found
+~/CS100/rshell/src
+pstar001@hammer $ ../bin/ls ~/Downloads main.cpp -a l[C[4h [4l[4hl[4l[4hs[4l
+stat:124: No such file or directory
+main.cpp  
+
+./                         ../                        
+.~lock.EC2 S14 W6 D1.ppt#* 
+
+
+~/CS100/rshell/src
+pstar001@hammer $ ../bin/ls ls ~/Downloads main.cpp -a l[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[Kls.cpp -a ~/Cs[KS100/rshell/ -l ~/Cs[KS100/rshell/
+-rw------- 1 pstar001 classes 25708 Nov 11 23:41 ls.cpp
+
+/class/classes/pstar001/CS100/rshell/:
+total 52
+drwx------ 6    pstar001 classes     4096 Nov 11 23:35 ./
+drwx------ 6    pstar001 classes     4096 Oct 20 10:13 ../
+drwx------ 2    pstar001 classes     4096 Nov 11 23:42 bin/
+drwx------ 8    pstar001 classes     4096 Nov 11 23:40 .git/
+-rw------- 1    pstar001 classes    18027 Oct 14 20:02 LICENSE
+-rw------- 1    pstar001 classes      425 Nov 11 23:33 Makefile
+-rw------- 1    pstar001 classes     3541 Nov 11 23:20 README.md
+drwx------ 3    pstar001 classes     4096 Nov 11 23:41 src/
+drwx------ 2    pstar001 classes     4096 Nov 11 23:41 tests/
+
+
+/class/classes/pstar001/CS100/rshell/:
+total 52
+drwx------ 6    pstar001 classes     4096 Nov 11 23:35 ./
+drwx------ 6    pstar001 classes     4096 Oct 20 10:13 ../
+drwx------ 2    pstar001 classes     4096 Nov 11 23:42 bin/
+drwx------ 8    pstar001 classes     4096 Nov 11 23:40 .git/
+-rw------- 1    pstar001 classes    18027 Oct 14 20:02 LICENSE
+-rw------- 1    pstar001 classes      425 Nov 11 23:33 Makefile
+-rw------- 1    pstar001 classes     3541 Nov 11 23:20 README.md
+drwx------ 3    pstar001 classes     4096 Nov 11 23:41 src/
+drwx------ 2    pstar001 classes     4096 Nov 11 23:41 tests/
+
+
+~/CS100/rshell/src
+pstar001@hammer $ ../bin/ls ls ls.cpp -a ~/CS100/rshell/ -l ~/CS100/rshell/src
+-rw------- 1 pstar001 classes 25708 Nov 11 23:41 ls.cpp
+
+/class/classes/pstar001/CS100/rshell/:
+total 52
+drwx------ 6    pstar001 classes     4096 Nov 11 23:35 ./
+drwx------ 6    pstar001 classes     4096 Oct 20 10:13 ../
+drwx------ 2    pstar001 classes     4096 Nov 11 23:42 bin/
+drwx------ 8    pstar001 classes     4096 Nov 11 23:40 .git/
+-rw------- 1    pstar001 classes    18027 Oct 14 20:02 LICENSE
+-rw------- 1    pstar001 classes      425 Nov 11 23:33 Makefile
+-rw------- 1    pstar001 classes     3541 Nov 11 23:20 README.md
+drwx------ 3    pstar001 classes     4096 Nov 11 23:41 src/
+drwx------ 2    pstar001 classes     4096 Nov 11 23:41 tests/
+
+
+/class/classes/pstar001/CS100/rshell/src:
+total 68
+drwx------ 3    pstar001 classes     4096 Nov 11 23:41 ./
+drwx------ 6    pstar001 classes     4096 Nov 11 23:35 ../
+-rw------- 1    pstar001 classes     3168 Nov 11 23:36 cp.cpp
+-rw------- 1    pstar001 classes    25708 Nov 11 23:41 ls.cpp
+-rw------- 1    pstar001 classes     6335 Oct 21 23:29 main.cpp
+-rw------- 1    pstar001 classes     5232 Nov 11 17:10 rshell.cpp
+drwx------ 2    pstar001 classes     4096 Nov 11 23:31 TESTDIR/
+-rw------- 1    pstar001 classes      370 Nov 11 23:20 test.cpp
+-rw------- 1    pstar001 classes     2697 Nov 11 23:24 Timer.h
+
+
+~/CS100/rshell/src
+pstar001@hammer $ ../bin/ls ls ls.cpp -a ~/CS100/rshell/ -l ~/CS100/rshell/src[1P ~/CS100/rshell/src[1P ~/CS100/rshell/src[1P[1P
+ls.cpp  
+
+/class/classes/pstar001/CS100/rshell/:
+bin/       LICENSE    Makefile   README.md  src/       tests/     
+
+/class/classes/pstar001/CS100/rshell/src:
+cp.cpp      ls.cpp      main.cpp    rshell.cpp  TESTDIR/    test.cpp    
+Timer.h     
+
+~/CS100/rshell/src
+pstar001@hammer $ ../bin/ls ls ls.cpp  ~/CS100/rshell/  ~/CS100/rshell/src[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[Kexit
+exit
+
+Script done on Tue 11 Nov 2014 11:45:39 PM PST
