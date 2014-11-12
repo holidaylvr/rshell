@@ -30,41 +30,59 @@ README.md
 ```
 ```
 /src:
-
+cp.cpp
+ls.cpp
 main.cpp
+rshell.cpp
+Timer.h
 
 ```
 ```
 ./tests:
-
+ls.script
 exec.script
 ```
 
 About Program
 -------------
+RSHELL
+------
 In this assignment, I attempted to make a simple command shell comprising of all the commands avaiable to me in the /usr/bin folder. This program is able to execute not only the commands availabe in the folder, but also the flags associated to the commands.
 
 The way the program works is the user is prompted a line that consists of the users login info, their host name, and the '$' symbol, which is immediately followed by the area for user input. The user then enters the command, and the command is executed and printed to the terminal. The process is intended to continue as such until the user inputs 'exit', which then causes the program to exit.
 
 For example, if the user enters 'ls', the program will print to the terminal all the contents in the current directory. If the user then enters 'ls -a', the program will print all the files in the current directory including the hidden files.
 
+LS
+------
+For this assignment, I attempted to implement some functionality of the bash command `ls`. Namely the -l -a and -R. However, I was unable to implement the -R flag. It introduced too many bugs into my code and I decided a final build without it was best.
+
+The way the program works is that the user compiles the program and passes to it either files, paths, flags, or a combination of the three.
+
+
 
 How to run file
 ---------------
 Once you have cloned the directory to your local machine, follow the directions below:
 --------------------------------------------------------------------------------------
-1. `cd` into `rshell` directory
+1. `cd` into `~/CS100/rshell` directory
 
-2. Call `make`
+2. make
 
-3. `cd` into `bin`
+3. bin/rshell 
 
-4. Call `rshell`
+4. repeat
 
-5. Can do steps 3 & 4 by calling `bin/rshell`
 
 RShell will now open up instead of BASH and you can execute almost commands as included in the regular terminal.
 
+LS
+-----
+1. cd ~/CS100/rshell
+
+2. make
+
+3. bin/ls ls /[paths] -[flags]
 
 Program reviewed by the University of California, Riverside.
 ------------------------------------------------------------
@@ -100,4 +118,16 @@ Bugs
 8.RSHELL cannot handle the command cd. We were not supposed to implement this in the assignment though.
 
 9.Up arrow to bring up previous commands does not work. 
+
+LS
+-----
+1. Outputs extra endl whitespace
+
+2. Cannot handle the -R flag
+
+3. Sorting does not work
+
+4. Does not print in color like actual ls
+
+5. Ls is a parameter to the function
 
