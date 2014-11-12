@@ -35,6 +35,37 @@ bool compFunct(string a, string b)
     return toupper(a[i]) < toupper(b[j]);
 }
 
+//calculates width of longest name
+//depends on -a flag
+int maxWidth(vector<string> dirName, int aFlag)
+{
+    int max;
+    for(int i=0; i < dirName.size(); i++)
+    {   
+                        
+        if(dirName.at(i)[0]=='.')
+        {
+            if(aFlag!=0) //we want to include w/-a
+            {
+                if(strlen(dirName.at(i).c_str()) > max)
+                {   
+                    max = strlen(dirName.at(i).c_str());
+                }
+            }
+                              
+        }
+        else 
+        {   
+            if(strlen(dirName.at(i).c_str()) > max)
+            {
+                max = strlen(dirName.at(i).c_str());
+            }
+        }
+
+    }
+    return max + 2;
+}
+
 int main(int argc, char** argv)
 {
     string lsID = "ls";
@@ -61,7 +92,7 @@ int main(int argc, char** argv)
                     if(argv[i][0] == '/') {
                         pathHold.push_back(argv[i]);
                     }
-                    if(argv[2][0] == '-'){
+                    if(argv[2][0] == '-' && argc==3){
                         pathHold.push_back(dot);
                     }
                     if(argv[i][0] == '-') {
@@ -103,14 +134,21 @@ int main(int argc, char** argv)
             if(fileHold.size()!=0){
                 DIR *dirp = opendir(filePath.c_str());
                 if(dirp == NULL) {
-                    perror("opendir: 118");
+                    perror("opendir: 137");
                     exit(1);
                 }
+                
                 if(lFlag==0){
                     for(int i=0; i < fileHold.size();i++){
+                         struct stat statbuf;
+                         pathTemp = pathBegin + "./" +  fileHold.at(i);
+                         if(-1 == stat(pathTemp.c_str(), &statbuf)) {
+                             perror("stat:124");
+                             continue; 
+                         }
                         cout << fileHold.at(i) << "  " ;
                     }
-                    cout << endl << endl;
+                    cout  << endl;
                 }
                 else {
                 char timeStr[200];
@@ -121,8 +159,8 @@ int main(int argc, char** argv)
                          struct stat statbuf;
                          pathTemp = pathBegin + "./" +  fileHold.at(i);
                          if(-1 == stat(pathTemp.c_str(), &statbuf)) {
-                             perror("stat:129");
-                             break;
+                             perror("stat:124");
+                             continue; 
                          }
                              if(S_ISDIR(statbuf.st_mode)){
                                 dFlag=1;
@@ -260,6 +298,51 @@ int main(int argc, char** argv)
                 char timeStr[200];
                 time_t t;
                 struct tm *tmp;
+                int count=0;
+                int bigName=0;
+                for(int i=0; i<dirHold.size();i++)
+                {
+                    struct stat statbuf;
+                    pathTemp = pathBegin + '/' + dirHold.at(i);
+                    if(-1 == stat(pathTemp.c_str(), &statbuf)) {
+                        perror("stat:308");
+                        exit(1);
+                    }
+                    if(statbuf.st_size > bigName)
+                    {
+                       bigName = sizeof(statbuf.st_size);
+                    }
+                }
+
+                
+                if(lFlag!=0){
+                    for(int i=0; i < dirHold.size(); i++){
+                        struct stat statbuf;
+                        pathTemp = pathBegin + '/' + dirHold.at(i);
+                        if(-1 == stat(pathTemp.c_str(), &statbuf)) {
+                            perror("stat:330");
+                            exit(1);
+                        }
+                        if(aFlag!=0)
+                        {
+                            count = count + (statbuf.st_blocks/2);
+                        }
+                        else
+                        {
+                            if(dirHold.at(i)[0]=='.')
+                            {
+                                continue;
+                                
+                            }
+                            count = count + (statbuf.st_blocks/2);
+                        }
+                    }
+
+                    cout << "total " << count << endl;
+                }
+                int width = maxWidth(dirHold, aFlag);
+                int max=80;
+                int currWidth=80;
                 for(int i=0, exFlag=0, dFlag=0; i < dirHold.size(); i++, exFlag=0, dFlag=0){
                     
                     if(dirHold.at(i)[0] == '.') {//signals hidden files
@@ -267,7 +350,7 @@ int main(int argc, char** argv)
                          struct stat statbuf;
                          pathTemp = pathBegin + '/' + dirHold.at(i);
                          if(-1 == stat(pathTemp.c_str(), &statbuf)) {
-                             perror("stat:285");
+                             perror("stat:297");
                              exit(1);
                          }
                              if(S_ISDIR(statbuf.st_mode)){
@@ -335,7 +418,7 @@ int main(int argc, char** argv)
                                      cout << "x ";
                                  }else
                                      cout << "- ";
-                                 std::cout <<  std::left << statbuf.st_nlink << ' ';
+                                 std::cout <<  std::left <<setw(4) << statbuf.st_nlink << ' ';
                                  struct passwd *getUID;
                                  if((getUID = getpwuid(statbuf.st_uid)) == 0 ){
                                      perror("getpwuid");
@@ -349,7 +432,7 @@ int main(int argc, char** argv)
 
                                  cout << getUID->pw_name << ' ';
                                  cout << groupID->gr_name << ' ';
-                                 std::cout.width(5); std::cout << std::right <<  statbuf.st_size << ' ';
+                                 std::cout.width(bigName); std::cout << std::right <<  statbuf.st_size << ' ';
                                  tmp = localtime(&statbuf.st_mtime);
                                  if(strftime(timeStr, 200 , "%b %d %k:%M ", tmp) ==0){
                                      perror("strftime");
@@ -357,20 +440,30 @@ int main(int argc, char** argv)
                                  }
                                  cout << timeStr ;
                             }
-                            cout << dirHold.at(i);
                             if(dFlag!=0){
-                                 cout << "/";
+                                 dirHold.at(i).append("/");
                             }
                             else if(exFlag!=0){
-                                 cout << "*";
-
+                                 dirHold.at(i).append("*");
                             }
-                            
-                            if(lFlag!=0){
-                                cout << endl;
+                            if(lFlag==0)
+                            {
+                                currWidth -= width;
+                                if(currWidth < 0)
+                                {
+                                    cout << endl;
+                                    currWidth=max;
+                                }
+                                cout << left << setw(width) <<dirHold.at(i);
                             }
                             else
-                                 cout << "  ";
+                            {
+                                cout << dirHold.at(i);
+                                if(lFlag!=0){
+                                    cout << endl;
+                                }
+                            }
+                            
                         }
                     }
                     else if(dirHold.at(i)[0] != '.') {//normal dir
@@ -455,11 +548,11 @@ int main(int argc, char** argv)
                                     perror("getgrgid");
                                     exit(1);
                             }
-                            std::cout <<  std::left << statbuf.st_nlink << ' ';
+                            std::cout <<  std::left << setw(4) << statbuf.st_nlink << ' ';
                             cout << getUID->pw_name << ' ';
                             cout << groupID->gr_name <<  ' ';
                             
-                            cout << setw(6); std::cout << std::right <<  statbuf.st_size << ' ';
+                            cout << setw(bigName); std::cout << std::right <<  statbuf.st_size << ' ';
                             char timeStr[200];
                             struct tm* tmp;
                             tmp = localtime(&statbuf.st_mtime);
@@ -470,18 +563,32 @@ int main(int argc, char** argv)
                             cout << timeStr;
                         }
                         
-                        cout << dirHold.at(i);
+                        //cout << left << setw(width) <<  dirHold.at(i);
                         if(dFlag !=0) { //-l
-                            cout << '/';
+                            //cout << '/';
+                            dirHold.at(i).append("/");
                         }
                         else if(exFlag != 0){ //-l
-                            cout << '*';
+                             dirHold.at(i).append("*");
                         }
-                        
-                        if(lFlag !=0)
-                            cout << endl;
+                        if(lFlag==0)
+                        {
+                            currWidth -= width;
+                            if(currWidth < 0)
+                            {
+                                cout << endl;
+                                currWidth=max;
+                            }
+                            cout << left << setw(width) << dirHold.at(i);
+                        }
                         else
-                            cout << "  ";
+                        {
+                            cout << dirHold.at(i);
+                            if(lFlag !=0)
+                                cout << endl;
+                            else {}
+                        }
+                            //cout << "  ";
                     }
                     
                     pathTemp.clear();
@@ -494,6 +601,7 @@ int main(int argc, char** argv)
                     perror("closedir:517");
                     exit(1);
                 }
+
                 cout << endl << endl;
             }
          }   
