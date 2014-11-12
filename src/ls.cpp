@@ -39,8 +39,8 @@ bool compFunct(string a, string b)
 //depends on -a flag
 int maxWidth(vector<string> dirName, int aFlag)
 {
-    int max;
-    for(int i=0; i < dirName.size(); i++)
+    unsigned max;
+    for(unsigned i=0; i < dirName.size(); i++)
     {   
                         
         if(dirName.at(i)[0]=='.')
@@ -76,9 +76,8 @@ int main(int argc, char** argv)
     }
     else {
         if(argc >= 2)  { //this means user entered ls and some args
-            const char* dirName=0;
             const char* dot= ".";
-            int aFlag=0, lFlag=0, rFlag=0;
+            int aFlag=0, lFlag=0;//, rFlag=0;
             vector<string> pathHold;
             vector<const char*> flagHold;
             vector<string> fileHold;
@@ -98,7 +97,7 @@ int main(int argc, char** argv)
                     if(argv[i][0] == '-') {
                         flagHold.push_back(argv[i]);
 
-                        for(int j=0; j < flagHold.size();  j++)
+                        for(unsigned j=0; j < flagHold.size();  j++)
                         {//will iterate through flag vector to determine 
                          //the flags entered
                             const char* ach =0;
@@ -116,7 +115,7 @@ int main(int argc, char** argv)
                             }
                             if(rch!=0)
                             {
-                                rFlag=1;
+                                //rFlag=1;
                             }
                         }
                         flagHold.clear();
@@ -139,7 +138,7 @@ int main(int argc, char** argv)
                 }
                 
                 if(lFlag==0){
-                    for(int i=0; i < fileHold.size();i++){
+                    for(unsigned i=0; i < fileHold.size();i++){
                          struct stat statbuf;
                          pathTemp = pathBegin + "./" +  fileHold.at(i);
                          if(-1 == stat(pathTemp.c_str(), &statbuf)) {
@@ -152,9 +151,8 @@ int main(int argc, char** argv)
                 }
                 else {
                 char timeStr[200];
-                time_t t;
                 struct tm *tmp;
-                for(int i=0, exFlag=0, dFlag=0; i < fileHold.size(); i++, exFlag=0, dFlag=0){
+                for(unsigned i=0, exFlag=0, dFlag=0; i < fileHold.size(); i++, exFlag=0, dFlag=0){
                     
                          struct stat statbuf;
                          pathTemp = pathBegin + "./" +  fileHold.at(i);
@@ -175,7 +173,6 @@ int main(int argc, char** argv)
                                  if(-1 == stat(pathTemp.c_str(), &statbuf)) {
                                      perror("stat: 187");
                                  }
-                                 int n = 80;
                                  if(S_ISDIR(statbuf.st_mode)) { //dir flag
                                      cout << 'd';
                                      dFlag = 1;
@@ -270,7 +267,7 @@ int main(int argc, char** argv)
             }
 
             //-----------OUTPUT PATHS NORMALLY----------------//
-            for(int l=0; l < pathHold.size(); l++) 
+            for(unsigned l=0; l < pathHold.size(); l++) 
             {
                 if(pathHold.size() > 1){
                      cout << pathHold.at(l) << ':' <<  endl;
@@ -296,11 +293,10 @@ int main(int argc, char** argv)
                 }
                 sort(dirHold.begin(), dirHold.end(),compFunct);
                 char timeStr[200];
-                time_t t;
                 struct tm *tmp;
                 int count=0;
                 int bigName=0;
-                for(int i=0; i<dirHold.size();i++)
+                for(unsigned i=0; i<dirHold.size();i++)
                 {
                     struct stat statbuf;
                     pathTemp = pathBegin + '/' + dirHold.at(i);
@@ -316,7 +312,7 @@ int main(int argc, char** argv)
 
                 
                 if(lFlag!=0){
-                    for(int i=0; i < dirHold.size(); i++){
+                    for(unsigned i=0; i < dirHold.size(); i++){
                         struct stat statbuf;
                         pathTemp = pathBegin + '/' + dirHold.at(i);
                         if(-1 == stat(pathTemp.c_str(), &statbuf)) {
@@ -343,7 +339,7 @@ int main(int argc, char** argv)
                 int width = maxWidth(dirHold, aFlag);
                 int max=80;
                 int currWidth=80;
-                for(int i=0, exFlag=0, dFlag=0; i < dirHold.size(); i++, exFlag=0, dFlag=0){
+                for(unsigned i=0, exFlag=0, dFlag=0; i < dirHold.size(); i++, exFlag=0, dFlag=0){
                     
                     if(dirHold.at(i)[0] == '.') {//signals hidden files
                          if(aFlag != 0 ) {//a flag set...hidden files
@@ -369,7 +365,6 @@ int main(int argc, char** argv)
                                      cerr << "error: " << dirHold.at(i) << endl;
                                      exit(1);
                                  }
-                                 int n = 80;
                                  if(S_ISDIR(statbuf.st_mode)) { //dir flag
                                      cout << 'd';
                                      dFlag = 1;
