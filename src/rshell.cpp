@@ -15,14 +15,6 @@ int main ()
 {
     //initial forking which I now realize was an error
     //leaving b/c program already developed
-    int pid = fork();
-    if(pid == -1) 
-    {
-        perror("fork outside:");
-        exit(1); 
-    }
-    else if (pid == 0)
-    {
         while (1)
         {   //infinite loop to run until `exit` command
             char* login = getlogin();
@@ -157,13 +149,5 @@ int main ()
                 }
             }
          }
-     }    
-    else if (pid > 0)
-    {   
-        if( -1 == wait(0))
-        {
-            perror("wait");
-        }
-    }
     return 0;
 }
