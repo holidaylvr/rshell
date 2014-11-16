@@ -186,6 +186,7 @@ int main ()
             //this will handle i/o redirection and piping
             else
             {
+                cout << "over here guys " << token <<  endl;
                 int fd[2];
                 if(pipe(fd)==-1)
                 {
