@@ -8,6 +8,7 @@
 #include<string>
 #include <string.h>
 #include <stdlib.h>
+#include <fcntl.h>
 
 using namespace std;
 
@@ -186,13 +187,134 @@ int main ()
             //this will handle i/o redirection and piping
             else
             {
+                while(token != 0)
+                {
                 cout << "over here guys " << token <<  endl;
+                //below is for parsing for input redirection....
+                string strToken = token;
+                char * tokHold = 0;
+                char * tok2 = 0;
+                int nowFlag = 0;
+                tokHold = new char[strToken.size()+2];
+                strcpy(tokHold, strToken.c_str());
+                if(strToken.find('<') != 0)
+                {
+                    nowFlag = 1;
+                    //cout << "Need to parse further I believe " << endl;
+                    cout << strToken << endl;
+                    //parse further to get rid of '<'
+                    /*char del[] = "< ";
+                    vector<string> hold2;
+                    tok2 = strtok_r(tokHold, del, &savptr2);
+                    while(tok2 != NULL)
+                    {
+                        //cout << tok2 << endl;
+                        hold2.push_back(tok2);
+                        tok2 = strtok_r(NULL, del, &savptr2);
+                    }
+                    //loop to get parsed data into array for execvp
+                    char **argv = new char*[hold2.size()+1];
+                    for(unsigned i=0; i<hold2.size();i++)
+                    {
+                        if(hold2.at(i) == "exit")
+                        {
+                            exit(1);
+                        }
+                        argv[i] = new char[hold2.at(i).size()+1];
+                        strcpy(argv[i], hold2.at(i).c_str());
+                        argv[hold2.size()] = 0;
+                    }
+
+                    //input now parsed into appropriate form (ie: [cat, make])
+                    int fd2 = open(argv[1], O_RDONLY | O_CREAT, 0777);
+                    if(fd2 == -1)
+                    {
+                        perror("open:229");
+                        exit(1);
+                    }
+                    int oldstdout = dup(1);
+                    if(oldstdout == -1)
+                    {
+                        perror("dup:230");
+                        exit(1);
+                    }
+                    if(-1 == close(0))
+                    {       
+                        perror("close:230");
+                        exit(1);
+                    }   
+                    if(-1 == dup(fd2))
+                    {
+                        perror("dup:235");
+                        exit(1);
+
+                    }*/
+                    /*if(-1 == execvp(argv[0], argv))
+                    {
+                        perror("execvp:232");
+                        exit(1);
+                    }*/
+                }
+                
+
+//-------------------------------PIPE--------------------------------------                
+                char del[] = "< ";
+                    vector<string> hold2;
+                    tok2 = strtok_r(tokHold, del, &savptr2);
+                    while(tok2 != NULL)
+                    {
+                        //cout << tok2 << endl;
+                        hold2.push_back(tok2);
+                        tok2 = strtok_r(NULL, del, &savptr2);
+                    }
+                    //loop to get parsed data into array for execvp
+                    char **argv = new char*[hold2.size()+1];
+                    for(unsigned i=0; i<hold2.size();i++)
+                    {
+                        if(hold2.at(i) == "exit")
+                        {
+                            exit(1);
+                        }
+                        argv[i] = new char[hold2.at(i).size()+1];
+                        strcpy(argv[i], hold2.at(i).c_str());
+                        argv[hold2.size()] = 0;
+                    }
+
+                    //input now parsed into appropriate form (ie: [cat, make])
+                    if(nowFlag !=0)
+                    {
+                    int fd2 = open(argv[1], O_RDONLY | O_CREAT, 0777);
+                    if(fd2 == -1)
+                    {
+                        perror("open:229");
+                        exit(1);
+                    }
+                    int oldstdout = dup(1);
+                    if(oldstdout == -1)
+                    {
+                        perror("dup:230");
+                        exit(1);
+                    }
+                    if(-1 == close(0))
+                    {       
+                        perror("close:230");
+                        exit(1);
+                    }   
+                    if(-1 == dup(fd2))
+                    {
+                        perror("dup:235");
+                        exit(1);
+
+                    }
+                    }
+
                 int fd[2];
                 if(pipe(fd)==-1)
                 {
                     perror("pipe:164");
                     exit(1);
                 }
+
 
                 int pid = fork();
                 if(pid == -1)
@@ -203,18 +325,23 @@ int main ()
                 else if(pid == 0) //child
                 {   
                     //execvp should be in here. Child writing to pipe maybe
+                    //ERROR CHECK
+                    execvp(argv[0], argv);
 
                 }
                 else if(pid > 0) //parent 
                 {
-                    
+                    wait(0); 
                     //need another fork to execute right side of pipe
+                    token = strtok_r(NULL, del, &savptr1);
+                    nowFlag=0;
 
                 }
                 
 
 
-
+                //token = strtok_r(NULL, del, &savptr1);
+            }
             }
         }
         return 0;
