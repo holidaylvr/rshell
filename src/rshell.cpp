@@ -197,7 +197,7 @@ int main ()
                 int nowFlag = 0;
                 tokHold = new char[strToken.size()+2];
                 strcpy(tokHold, strToken.c_str());
-                if(strToken.find('<') != 0)
+                if(strToken.find('<') != -1)
                 {
                     nowFlag = 1;
                     //cout << "Need to parse further I believe " << endl;
@@ -281,6 +281,7 @@ int main ()
                     }
 
                     //input now parsed into appropriate form (ie: [cat, make])
+                    cout << "nowFlag:284 " << nowFlag << endl;
                     if(nowFlag !=0)
                     {
                     int fd2 = open(argv[1], O_RDONLY | O_CREAT, 0777);
@@ -308,6 +309,7 @@ int main ()
                     }
                     }
 
+                cout << "piepTrip:312" << pipeTrip << endl;
                 int fd[2];
                 if(pipe(fd)==-1)
                 {
@@ -335,6 +337,7 @@ int main ()
                     //need another fork to execute right side of pipe
                     token = strtok_r(NULL, del, &savptr1);
                     nowFlag=0;
+                    cout << "flag after" << nowFlag << endl;
 
                 }
                 
