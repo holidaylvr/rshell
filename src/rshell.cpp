@@ -55,17 +55,17 @@ int fork_pipe(int n, vector<string> arg_list, vector<int> redir_flags)
     int in, fd[2];
     in = 0; //first process should read from STDIN... unless other redir flag set
             //determine redir flag below! ! ! ! ! ! ! -------------------------------->  ! ! ! ! ! ! !  ! !
-    char *token_temp, *savptr_temp, *replace_temp;
+        char *token_temp, *savptr_temp, *replace_temp;
         char del2[] = "< >";
         vector<string> single_cmd;
-        replace_temp = new char[arg_list.at(i).length()+1];
+        replace_temp = new char[arg_list.at(0).size()+1];
 
-        char **argv = new char*[arg_list.size()+1];
+        char **argv = new char*[arg_list.at(0).size()+1];
         strcpy(replace_temp, arg_list.at(i).c_str());
         token_temp = strtok_r(replace_temp, del2, &savptr_temp);
 
 //-----------------------------------------------------------------------------
-    //cout << "58 " <<  n << endl;    
+    cout << "58 " <<  n << endl;    
     for(int i=0; i < n-1; i++) //all but last processes created here
     {
         cout << "loop " << endl;
@@ -131,16 +131,17 @@ int fork_pipe(int n, vector<string> arg_list, vector<int> redir_flags)
 
      }
 //-----------------------------------------------------------------------------
-        //cout << token_temp << endl;
-        argv = new char*[arg_list.size()+1]; 
+        cout << "134 " <<  token_temp << endl;
+        /*argv = new char*[arg_list.size()+1]; 
         strcpy(replace_temp, arg_list.at(n-1).c_str());    
-        token_temp = strtok_r(replace_temp, del2, &savptr_temp);
+        token_temp = strtok_r(replace_temp, del2, &savptr_temp);*/
         while(token_temp != 0)
         {
             single_cmd.push_back(token_temp);
-            cout << "142 " << token_temp << endl;
+            cerr << "142 " << token_temp << endl;
             token_temp = strtok_r(NULL, del2, &savptr_temp);
         }
+        cerr << "144 " << endl;
         for(int j=0; j < single_cmd.size(); j++)
         {
             argv[j] = new char[single_cmd.at(j).size()+1];
@@ -362,7 +363,7 @@ int main ()
                 
                 cmd[i] = new char[tokens.at(i).size()+1];
                 strcpy(cmd[i], tokens.at(i).c_str());
-                cout << cmd[i] << endl;
+                cout << "366 " << cmd[i] << endl;
             }
             //cout << "cmd: " << tokens.size() << endl;
             //exit(1);
