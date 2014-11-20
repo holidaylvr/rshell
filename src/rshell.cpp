@@ -119,7 +119,6 @@ int fork_pipe(int n, vector<string> arg_list, vector<int> redir_flags)
                 exit(1);
             }
         }
-        cout << "should run 122" << endl;
         cout << "in 123 " << in << endl;
         new_proc(in, fd[1], argv);
 
@@ -161,16 +160,33 @@ int fork_pipe(int n, vector<string> arg_list, vector<int> redir_flags)
         if(redir_flags.at(0) == 0 && redir_flags.size() == 1)
         {
             cout << "input redir 161 " << endl;
-            if(-1 == (in=open(argv[0], O_RDONLY | O_CREAT, umask(1777))))
+            if(n==1)
+            {
+                if(-1 == (in = open(argv[1], O_RDONLY | O_CREAT, 1777)))
+                {
+                    perror("open 167");
+                    exit(1);
+                
+                }
+                close(0);
+                dup2(in,0);
+            }
+            else if(-1 == (in = open(argv[0], O_RDONLY | O_CREAT, 1777)))
             {
                 close(0);
-                dup(in);
+                if(-1 == dup2(in,0))
+                {
+                    perror("dupe 168 ");
+                    exit(1);
+                }
             }
+            close(0);
+            dup2(in,0);
         }
         else if(redir_flags.at(i) == 1 && redir_flags.size() == 1)
         {
             cout << "out 170 " << endl;
-            if(-1 == (fd[1] = open(argv[0], O_RDWR | O_CREAT, umask(1777))))
+            if(-1 == (fd[1] = open(argv[0], O_RDWR | O_CREAT, 1777)))
             {
                 perror("open:175 ");
                 exit(1);
@@ -180,7 +196,7 @@ int fork_pipe(int n, vector<string> arg_list, vector<int> redir_flags)
         else if(redir_flags.at(i) == 2 && redir_flags.size() ==1)
         {
             cout << "out2 178 " << endl;
-            if(-1 == (fd[1] = open(argv[0], O_RDWR | O_APPEND, umask(1777))))
+            if(-1 == (fd[1] = open(argv[0], O_RDWR | O_APPEND, 1777)))
             {
                 perror("open:182 ");
                 exit(1);
