@@ -30,7 +30,7 @@ int new_proc(int in, int out, char ** cmd)
             dup2(in, 0);
             close(in); //close it. Copied to STDOUT
         }
-        else if(in != 1) //
+        if(out != 1) //
         {
             dup2(out, 1); //we will write to pipe
             close(out);//close it. Copied it to STDIN
@@ -65,10 +65,10 @@ int fork_pipe(int n, vector<string> arg_list, vector<int> redir_flags)
         token_temp = strtok_r(replace_temp, del2, &savptr_temp);
 
 //-----------------------------------------------------------------------------
-    cout << "58 " <<  n << endl;    
+    cout << "68: i " <<  n << endl;    
     for(int i=0; i < n-1; i++) //all but last processes created here
     {
-        cout << "loop " << endl;
+        cout << "loop " <<  " i " << i << endl;
         strcpy(replace_temp, arg_list.at(i).c_str());    
         token_temp = strtok_r(replace_temp, del2, &savptr_temp);
 
@@ -80,7 +80,7 @@ int fork_pipe(int n, vector<string> arg_list, vector<int> redir_flags)
         }
         for(int j=0; j < single_cmd.size(); j++)
         {
-            argv[j] = new char[single_cmd.at(i=j).size()+1];
+            argv[j] = new char[single_cmd.at(j).size()+1];
             strcpy(argv[j], single_cmd.at(j).c_str());
             cout << "81 " << argv[j] << endl;
             argv[single_cmd.size()] = 0;
@@ -92,14 +92,16 @@ int fork_pipe(int n, vector<string> arg_list, vector<int> redir_flags)
         //fd[1]write end of the pipe we carry in from prev iteration....
         
         //need to change STDIN if input redir
+        //cout << " i " << i << endl;
+        //cout << redir_flags.at(i) << " 95 " <<  endl;
         if(redir_flags.at(i) == 0)
         {
-            if( -1 == (in = open(argv[0], O_RDONLY | O_CREAT, 0777)))
+            if( -1 == (in = open(argv[1], O_RDONLY | O_CREAT, 1777)))
             {
                 perror("open:94");
                 exit(1);
             }
-            cout << in  << "100 "<< endl;
+            cout << in  << " 100 "<< endl;
             
         }
         else if(redir_flags.at(i) == 1)
@@ -119,7 +121,7 @@ int fork_pipe(int n, vector<string> arg_list, vector<int> redir_flags)
                 exit(1);
             }
         }
-        cout << "in 123 " << in << endl;
+        //cout << "in 123 " << in << endl;
         new_proc(in, fd[1], argv);
 
         //dont need to write to pipe, child does that
@@ -131,17 +133,19 @@ int fork_pipe(int n, vector<string> arg_list, vector<int> redir_flags)
 
      }
 //-----------------------------------------------------------------------------
-        cout << "134 " <<  token_temp << endl;
-        /*
-        strcpy(replace_temp, arg_list.at(n-1).c_str());    
-        token_temp = strtok_r(replace_temp, del2, &savptr_temp);*/
+        //cout << "134 " <<  token_temp << endl;
+        if(n != 0)
+        {
+            strcpy(replace_temp, arg_list.at(n-1).c_str());    
+            token_temp = strtok_r(replace_temp, del2, &savptr_temp);
+        }
         while(token_temp != 0)
         {
             single_cmd.push_back(token_temp);
-            cerr << "142 " << token_temp << endl;
+            //cerr << "142 " << token_temp << endl;
             token_temp = strtok_r(NULL, del2, &savptr_temp);
         }
-        cerr << "144 " << endl;
+        //cerr << "144 " << endl;
         
         argv = new char*[single_cmd.size()+1]; 
         for(int j=0; j < single_cmd.size(); j++)
@@ -149,9 +153,9 @@ int fork_pipe(int n, vector<string> arg_list, vector<int> redir_flags)
             argv[j] = new char[single_cmd.at(j).size()+1];
             strcpy(argv[j], single_cmd.at(j).c_str());
             cout << "149 " << argv[j] << endl;
-            cout << "command size 149 " << single_cmd.size() << endl;
+            //cout << "command size 149 " << single_cmd.size() << endl;
             cout << "j " << j << endl;
-            argv[arg_list.size()] = 0;
+            argv[arg_list.size()+1] = 0;
         }
         
      //last stage of pipe, set STDIN to be read end of prev pipe and output 
@@ -165,7 +169,9 @@ int fork_pipe(int n, vector<string> arg_list, vector<int> redir_flags)
             cout << "input redir 161 " << endl;
             if(n==1)
             {
-                if(-1 == (in = open(argv[1], O_RDONLY | O_CREAT, 1777)))
+                cout << "168 " << endl;
+                cout << "173 " << argv[1] << endl;
+                if(-1 == (in = open(argv[1], O_RDONLY | O_CREAT, 0777)))
                 {
                     perror("open 167");
                     exit(1);
@@ -205,15 +211,20 @@ int fork_pipe(int n, vector<string> arg_list, vector<int> redir_flags)
                 exit(1);
             }
         }
-        else if(in != 0)
+        if(in != 0)
         //input and output to original fd
         {
+            cout << "211 " << endl;
             dup2(in,0);
         }
 
         //execute last stage with current proc
         cout << "execute betch " << endl;
-        return execvp(argv[0], argv);
+        if(-1 == execvp(argv[0], argv))
+        {
+            perror("execvp 222");
+            exit(1);
+        }
         //CHANGE TO APPROPRIATE ARRAY AFTER PARSING
 
 
