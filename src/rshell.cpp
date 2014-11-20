@@ -27,12 +27,20 @@ int new_proc(int in, int out, char ** cmd)
     {
         if(in != 0) //
         {
-            dup2(in, 0);
+            if(-1 == dup2(in, 0))
+            {
+                perror("dup2 32");
+                exit(1);
+            }
             close(in); //close it. Copied to STDOUT
         }
         if(out != 1) //
         {
-            dup2(out, 1); //we will write to pipe
+            if(-1 == dup2(out, 1))
+             {
+                perror("dup2 41");
+                exit(1);       
+             }//we will write to pipe
             close(out);//close it. Copied it to STDIN
         }
         if( -1 == execvp(cmd[0], cmd))
@@ -40,9 +48,6 @@ int new_proc(int in, int out, char ** cmd)
                 perror("execvp:37");
                 exit(1);
         }
-        //else //means in == 0 so first process
-             //------------------------------------------------------------------> ! ! ! ! ! ! !  ! ! ! ! ! ! ! ! 
-          //      execvp(cmd[0], cmd);
     }
     return pid; //IDK?
 }
@@ -50,19 +55,19 @@ int new_proc(int in, int out, char ** cmd)
 int fork_pipe(int n, vector<string> arg_list, vector<int> redir_flags)
 {
     cout << "HERE " << endl;
-    int i;
+    int i=0;
     pid_t pid;
     int in, fd[2];
     in = 0; //first process should read from STDIN... unless other redir flag set
             //determine redir flag below! ! ! ! ! ! ! -------------------------------->  ! ! ! ! ! ! !  ! !
-        char *token_temp, *savptr_temp, *replace_temp;
-        char del2[] = "< >";
-        vector<string> single_cmd;
-        replace_temp = new char[arg_list.at(0).size()+1];
+    char *token_temp, *savptr_temp, *replace_temp;
+    char del2[] = "< >";
+    vector<string> single_cmd;
+    replace_temp = new char[arg_list.at(0).size()+1];
 
-        char **argv = new char*[arg_list.at(0).size()+1];
-        strcpy(replace_temp, arg_list.at(i).c_str());
-        token_temp = strtok_r(replace_temp, del2, &savptr_temp);
+    char **argv = new char*[arg_list.at(0).size()+1];
+    strcpy(replace_temp, arg_list.at(0).c_str());
+    token_temp = strtok_r(replace_temp, del2, &savptr_temp);
 
 //-----------------------------------------------------------------------------
     cout << "68: i " <<  n << endl;    
@@ -88,7 +93,11 @@ int fork_pipe(int n, vector<string> arg_list, vector<int> redir_flags)
         single_cmd.clear();//clear up vector
 
         //cout << "88" << argv[0] << endl;
-        pipe(fd); 
+        if(-1 == pipe(fd))
+        {
+            perror("pipe 99");
+            exit(1);
+        }
         //fd[1]write end of the pipe we carry in from prev iteration....
         
         //need to change STDIN if input redir
@@ -111,7 +120,11 @@ int fork_pipe(int n, vector<string> arg_list, vector<int> redir_flags)
                 perror("open:105 ");
                 exit(1);
             }
-            dup2(in,1);
+            if(-1 == dup2(in,1))
+            {
+                perror("dup2 124");
+                exit(1);
+            }
             close(in);
         }
         else if(redir_flags.at(i) == 2)
@@ -171,7 +184,13 @@ int fork_pipe(int n, vector<string> arg_list, vector<int> redir_flags)
      //last stage of pipe, set STDIN to be read end of prev pipe and output 
         //to the original fd 1
         if(in != 0)
-            dup2(in, 0);
+        {
+            if(-1 == dup2(in, 0))
+            {
+                perror("dup2 189");
+                exit(1);
+            }
+        }
 
         //case where only one cmd "cat < test.cpp"
         if(redir_flags.at(n-1) == 1)
@@ -185,7 +204,11 @@ int fork_pipe(int n, vector<string> arg_list, vector<int> redir_flags)
             }
             
             argv[size_curr_parse-1] = 0;
-            dup2(in, 1);
+            if(-1 == dup2(in, 1))
+            {
+                perror("dup2 208");
+                exit(1);
+            }
             close(in);
         }
         if(redir_flags.at(n-1) == 2)
@@ -199,7 +222,11 @@ int fork_pipe(int n, vector<string> arg_list, vector<int> redir_flags)
             }
             
             argv[size_curr_parse-1] = 0;
-            dup2(in, 1);
+            if(-1 == dup2(in, 1))
+            {
+                perror("dup2 226");
+                exit(1);
+            }
             close(in);
         }
         if(redir_flags.at(0) == 0 && redir_flags.size() == 1)
@@ -216,10 +243,16 @@ int fork_pipe(int n, vector<string> arg_list, vector<int> redir_flags)
                 
                 }
                 close(0);
-                dup2(in,0);
+                if(-1 == dup2(in,0))
+                {
+                    perror("dup2 247");
+                    exit(1);
+                }
             }
             else if(-1 == (in = open(argv[0], O_RDONLY | O_CREAT, 00700)))
             {
+                perror("open 254");
+                exit(1);
                 close(0);
                 if(-1 == dup2(in,0))
                 {
@@ -228,7 +261,11 @@ int fork_pipe(int n, vector<string> arg_list, vector<int> redir_flags)
                 }
             }
             close(0);
-            dup2(in,0);
+            /*if(-1 == dup2(in,0))
+            {       
+                perror("dup2 263");
+                exit(1);
+            }*/
         }
         /*else if(redir_flags.at(i) == 1 && redir_flags.size() == 1)
         {
@@ -255,12 +292,16 @@ int fork_pipe(int n, vector<string> arg_list, vector<int> redir_flags)
             dup2(in,1);
             close(in);
         }*/
-        if(in != 0)
+        /*if(in != 0)
         //input and output to original fd
         {
-            cout << "211 " << endl;
-            dup2(in,0);
-        }
+            cout << "298 " << endl;
+            if(-1 == dup2(in,0))
+            {
+                perror("dup2 298");
+                exit(1);
+            }
+        }*/
 
         //execute last stage with current proc
         cout << "execute betch " << endl;
@@ -306,123 +347,69 @@ int main ()
             if(findComment != -1)
             {
                 parse.at(findComment) = 0;
-                cout << "found comment: " << endl;
+                //cout << "found comment: " << endl;
             }
             if(findAnd != -1) //signal if user input has && 
             {
                 andTrip = 1;
-                cout << "found `&&`: " << endl;
+                //cout << "found `&&`: " << endl;
 
             }
             if(findPipe !=-1 )//need to check if pipe or `||`
             {
                 if(parse[findPipe + 1] == '|')
                 {
-                    cout << "found ||" << endl;
+                    //cout << "found ||" << endl;
                     orTrip = 1;
                 }
                 else
                 {
                     pipeTrip = 1;
-                    cout << "found pipe: " << findPipe << endl;
+                    //cout << "found pipe: " << findPipe << endl;
                 }
             }
             if(findInRedir != -1)
             {
                 inRedirTrip = 1;
-                cout << "found input redirection: " << endl;
+                //cout << "found input redirection: " << endl;
             }
             if(findOutRedir != -1)
             {
                 if(parse[findOutRedir + 1] == '>')
                 {
                     outRedirTrip2 =1;
-                    cout << "found output redirection2" << endl;
+                    //cout << "found output redirection2" << endl;
                 }
                 else
                 {
                     outRedirTrip = 1;
-                    cout << "found output redirection: " << endl;
+                    //cout << "found output redirection: " << endl;
                 }
             }
             char del[] = ";|&"; //delimiter to signal diff cmd
-            
-            //char del2[] = "<| >";
             char *token, *token2;
-            char *token3; //
             char *savptr1, *savptr2;
-            char *savptr3; //
                            
             char* replace=0; 
-            char* replace2=0; //
             replace = new char[parse.size()+2];
-            replace2 = new char[parse.size()+2]; //
             strcpy(replace, parse.c_str());
-            //iterate the parsed token
-            string token4; //
-            vector<string> tokens; //
-            vector<int> redirect_indicator; //
+
             token = strtok_r(replace, del, &savptr1);
-            
-            strcpy(replace2, replace); //
-            
-//-----------------PUT CMD STRINGS  INTO VECTOR FOR EASE-----------------------
-            while(token != NULL)
-            {
-                token4  = token;
-                //cout << "215 " <<  token << endl;
-
-                //will push indicators into vector for reference in pipe_fork
-                if(token4.find("<")!=-1){
-                    redirect_indicator.push_back(0);
-                    //cout << "pushed 0 " << endl;
-                }
-                else if(token4.find('>')!=-1)
-                {
-                    if(token4[token4.find('>')+1] == '>')
-                    {
-                        redirect_indicator.push_back(2);
-                        //cout << "pushed 2: " << endl;
-                    }
-                    else{
-                        redirect_indicator.push_back(1);
-                        //cout << "pushed 1 " << endl;
-                    }
-                }
-                else{
-                    redirect_indicator.push_back(-1);
-                    //cout << "pushed -1 " << endl;
-                }
-
-                tokens.push_back(token);
-                
-                
-                token = strtok_r(NULL, del, &savptr1);
-            }
-            /*for(int i=0; i < redirect_indicator.size(); i++)
-            {
-                cout << "indicator: " << redirect_indicator.at(i) << endl;
-            }*/
-            char ** cmd  = new char*[tokens.size()];
-
-//-------------------PUT CMD STRINGS INTO ARRAY FOR LATER----------------------
-            //cout << "testing tokens: " << endl;
-            /*for(int i = 0; i < tokens.size(); i++ )
-            {   
-                
-                cmd[i] = new char[tokens.at(i).size()+1];
-                strcpy(cmd[i], tokens.at(i).c_str());
-                cout << "366 " << cmd[i] << endl;
-            }*/
 //--------------------------OLD RSHELL ----------------------------------------
+            cout << "ortrip " << orTrip << endl;
+            cout << andTrip << " andTrip " << endl;
+            string quit = token;
+            if(quit  == "exit")
+            {
+                exit(1);
+            }   
             if(orTrip !=0 || andTrip !=0)
-
             {
                     //cout << "here " << endl;
                     while (token != NULL)
                     {
-                            cout << "pased token first round: " << endl;
-                            cout << token << endl;
+                            //cout << "pased token first round: " << endl;
+                            //cout << token << endl;
                             string fakeTok = token;
                             char* replace2=0;
                             replace2 = new char[fakeTok.size()+1];
@@ -509,6 +496,50 @@ int main ()
 //---------------------REVISED RSHELL -----------------------------------------
             else
             {
+                cerr << "down here " << endl; 
+                char *token3; //
+                string token4; //
+                char *savptr3; //
+                char* replace2=0; //
+                replace2 = new char[parse.size()+2]; //
+                vector<string> tokens; //
+                vector<int> redirect_indicator; //
+                strcpy(replace2, replace); //
+            
+//-----------------PUT CMD STRINGS  INTO VECTOR FOR EASE-----------------------
+                while(token != NULL)
+                {
+                    token4  = token;
+                    //cout << "215 " <<  token << endl;
+
+                    //will push indicators into vector for reference in pipe_fork
+                    if(token4.find("<")!=-1){
+                        redirect_indicator.push_back(0);
+                        //cout << "pushed 0 " << endl;
+                    }
+                    else if(token4.find('>')!=-1)
+                    {
+                        if(token4[token4.find('>')+1] == '>')
+                        {
+                            redirect_indicator.push_back(2);
+                            //cout << "pushed 2: " << endl;
+                        }
+                        else{
+                            redirect_indicator.push_back(1);
+                            //cout << "pushed 1 " << endl;
+                        }
+                    }
+                    else{
+                        redirect_indicator.push_back(-1);
+                        //cout << "pushed -1 " << endl;
+                    }
+
+                    tokens.push_back(token);
+                
+                
+                    token = strtok_r(NULL, del, &savptr1);
+                }
+                char ** cmd  = new char*[tokens.size()];
                 fork_pipe(tokens.size(), tokens, redirect_indicator);
                 cout << "returned fully " << endl;
             }
