@@ -132,7 +132,7 @@ int fork_pipe(int n, vector<string> arg_list, vector<int> redir_flags)
      }
 //-----------------------------------------------------------------------------
         cout << "134 " <<  token_temp << endl;
-        /*argv = new char*[arg_list.size()+1]; 
+        /*
         strcpy(replace_temp, arg_list.at(n-1).c_str());    
         token_temp = strtok_r(replace_temp, del2, &savptr_temp);*/
         while(token_temp != 0)
@@ -142,6 +142,8 @@ int fork_pipe(int n, vector<string> arg_list, vector<int> redir_flags)
             token_temp = strtok_r(NULL, del2, &savptr_temp);
         }
         cerr << "144 " << endl;
+        
+        argv = new char*[single_cmd.size()+1]; 
         for(int j=0; j < single_cmd.size(); j++)
         {
             argv[j] = new char[single_cmd.at(j).size()+1];
