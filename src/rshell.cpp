@@ -96,7 +96,7 @@ int fork_pipe(int n, vector<string> arg_list, vector<int> redir_flags)
         //cout << redir_flags.at(i) << " 95 " <<  endl;
         if(redir_flags.at(i) == 0)
         {
-            if( -1 == (in = open(argv[1], O_RDONLY | O_CREAT, 1777)))
+            if( -1 == (in = open(argv[1], O_RDONLY | O_CREAT, 00700)))
             {
                 perror("open:94");
                 exit(1);
@@ -106,16 +106,18 @@ int fork_pipe(int n, vector<string> arg_list, vector<int> redir_flags)
         }
         else if(redir_flags.at(i) == 1)
         {
-            if(-1 == (fd[1] = open(argv[0], O_RDWR | O_CREAT, 0777)))
+            if(-1 == (in = open(argv[0], O_RDWR | O_CREAT, 0777)))
             {
                 perror("open:105 ");
                 exit(1);
             }
+            dup2(in,1);
+            close(in);
         }
         else if(redir_flags.at(i) == 2)
         {
             cout << "out2 115 " << endl;
-            if(-1 == (fd[1] = open(argv[0], O_RDWR | O_APPEND, 0777)))
+            if(-1 == (in = open(argv[0], O_RDWR | O_APPEND, 0777)))
             {
                 perror("open:117 ");
                 exit(1);
@@ -134,6 +136,7 @@ int fork_pipe(int n, vector<string> arg_list, vector<int> redir_flags)
      }
 //-----------------------------------------------------------------------------
         //cout << "134 " <<  token_temp << endl;
+        
         if(n != 0)
         {
             strcpy(replace_temp, arg_list.at(n-1).c_str());    
@@ -145,6 +148,7 @@ int fork_pipe(int n, vector<string> arg_list, vector<int> redir_flags)
             //cerr << "142 " << token_temp << endl;
             token_temp = strtok_r(NULL, del2, &savptr_temp);
         }
+        int size_curr_parse = single_cmd.size();
         //cerr << "144 " << endl;
         
         argv = new char*[single_cmd.size()+1]; 
@@ -155,8 +159,14 @@ int fork_pipe(int n, vector<string> arg_list, vector<int> redir_flags)
             cout << "149 " << argv[j] << endl;
             //cout << "command size 149 " << single_cmd.size() << endl;
             cout << "j " << j << endl;
-            argv[arg_list.size()+1] = 0;
+            //argv[arg_list.size()+1] = 0;
         }
+        for(int k=0; k < size_curr_parse; k++)
+        {
+            cout << "166: " << argv[k] << endl;
+        }
+        //cout << redir_flags.size() << " flag size " << endl;
+        
         
      //last stage of pipe, set STDIN to be read end of prev pipe and output 
         //to the original fd 1
@@ -164,6 +174,34 @@ int fork_pipe(int n, vector<string> arg_list, vector<int> redir_flags)
             dup2(in, 0);
 
         //case where only one cmd "cat < test.cpp"
+        if(redir_flags.at(n-1) == 1)
+        {
+            cout << "good, made it " << endl;
+            cout << argv[size_curr_parse-1] << endl;
+            if(-1 == (in = open(argv[size_curr_parse-1], O_RDWR| O_TRUNC | O_CREAT, 00700)))
+            {
+                perror("open 182");
+                exit(1);
+            }
+            
+            argv[size_curr_parse-1] = 0;
+            dup2(in, 1);
+            close(in);
+        }
+        if(redir_flags.at(n-1) == 2)
+        {
+            cout << "good, made it2 " << endl;
+            cout << argv[size_curr_parse-1] << endl;
+            if(-1 == (in = open(argv[size_curr_parse-1], O_RDWR | O_APPEND, 00700)))
+            {
+                perror("open 182");
+                exit(1);
+            }
+            
+            argv[size_curr_parse-1] = 0;
+            dup2(in, 1);
+            close(in);
+        }
         if(redir_flags.at(0) == 0 && redir_flags.size() == 1)
         {
             cout << "input redir 161 " << endl;
@@ -171,7 +209,7 @@ int fork_pipe(int n, vector<string> arg_list, vector<int> redir_flags)
             {
                 cout << "168 " << endl;
                 cout << "173 " << argv[1] << endl;
-                if(-1 == (in = open(argv[1], O_RDONLY | O_CREAT, 1777)))
+                if(-1 == (in = open(argv[1], O_RDONLY | O_CREAT, 00700)))
                 {
                     perror("open 167");
                     exit(1);
@@ -180,7 +218,7 @@ int fork_pipe(int n, vector<string> arg_list, vector<int> redir_flags)
                 close(0);
                 dup2(in,0);
             }
-            else if(-1 == (in = open(argv[0], O_RDONLY | O_CREAT, 1777)))
+            else if(-1 == (in = open(argv[0], O_RDONLY | O_CREAT, 00700)))
             {
                 close(0);
                 if(-1 == dup2(in,0))
@@ -192,25 +230,31 @@ int fork_pipe(int n, vector<string> arg_list, vector<int> redir_flags)
             close(0);
             dup2(in,0);
         }
-        else if(redir_flags.at(i) == 1 && redir_flags.size() == 1)
+        /*else if(redir_flags.at(i) == 1 && redir_flags.size() == 1)
         {
             cout << "out 170 " << endl;
-            if(-1 == (fd[1] = open(argv[0], O_RDWR | O_CREAT, 1777)))
+            cout << size_curr_parse << " size pasre" << endl;
+            cout << "203 " << argv[size_curr_parse-1] << endl;
+            if(-1 == (in = open(argv[size_curr_parse-1], O_RDWR | O_CREAT, 00700)))
             {
                 perror("open:175 ");
                 exit(1);
             }
+            dup2(in,1);
+            close(in);
             //argv[arg_list.size()-1] = 0;
-        }
-        else if(redir_flags.at(i) == 2 && redir_flags.size() ==1)
+        }*/
+        /*else if(redir_flags.at(i) == 2 && redir_flags.size() ==1)
         {
             cout << "out2 178 " << endl;
-            if(-1 == (fd[1] = open(argv[0], O_RDWR | O_APPEND, 1777)))
+            if(-1 == (in = open(argv[size_curr_parse-1], O_RDWR | O_APPEND, 00700)))
             {
-                perror("open:182 ");
+                perror("open:252 ");
                 exit(1);
             }
-        }
+            dup2(in,1);
+            close(in);
+        }*/
         if(in != 0)
         //input and output to original fd
         {
@@ -225,10 +269,7 @@ int fork_pipe(int n, vector<string> arg_list, vector<int> redir_flags)
             perror("execvp 222");
             exit(1);
         }
-        //CHANGE TO APPROPRIATE ARRAY AFTER PARSING
-
-
-
+        return 1;
 }
 
 int main ()
@@ -306,29 +347,24 @@ int main ()
             }
             char del[] = ";|&"; //delimiter to signal diff cmd
             
-            char del2[] = "<| >";
-            char *token, *token2, *token3;
-            char *savptr1, *savptr2, *savptr3;
+            //char del2[] = "<| >";
+            char *token, *token2;
+            char *token3; //
+            char *savptr1, *savptr2;
+            char *savptr3; //
                            
             char* replace=0; 
-            char* replace2=0;
+            char* replace2=0; //
             replace = new char[parse.size()+2];
-            replace2 = new char[parse.size()+2];
+            replace2 = new char[parse.size()+2]; //
             strcpy(replace, parse.c_str());
             //iterate the parsed token
-            string token4;
-            vector<string> tokens;
-            vector<int> redirect_indicator;
+            string token4; //
+            vector<string> tokens; //
+            vector<int> redirect_indicator; //
             token = strtok_r(replace, del, &savptr1);
             
-            strcpy(replace2, replace);
-            
-            /*token3 = strtok_r(replace2, del2, &savptr3);
-            while(token3 != NULL)
-            {
-                cout << "180: " << token3 << endl;
-                token3 = strtok_r(NULL, del2, &savptr3);
-            }*/
+            strcpy(replace2, replace); //
             
 //-----------------PUT CMD STRINGS  INTO VECTOR FOR EASE-----------------------
             while(token != NULL)
@@ -371,17 +407,18 @@ int main ()
 
 //-------------------PUT CMD STRINGS INTO ARRAY FOR LATER----------------------
             //cout << "testing tokens: " << endl;
-            for(int i = 0; i < tokens.size(); i++ )
+            /*for(int i = 0; i < tokens.size(); i++ )
             {   
                 
                 cmd[i] = new char[tokens.at(i).size()+1];
                 strcpy(cmd[i], tokens.at(i).c_str());
                 cout << "366 " << cmd[i] << endl;
-            }
-            //cout << "cmd: " << tokens.size() << endl;
-            //exit(1);
+            }*/
+//--------------------------OLD RSHELL ----------------------------------------
             if(orTrip !=0 || andTrip !=0)
+
             {
+                    //cout << "here " << endl;
                     while (token != NULL)
                     {
                             cout << "pased token first round: " << endl;
@@ -469,159 +506,11 @@ int main ()
                             }
                     }
             }
-//-----------this will handle i/o redirection and piping-----------------------
-            else if (orTrip != 0)
-            {
-                while(token != 0)
-                {
-                //cout << "token: " << token <<  endl;
-                //below is for parsing for input redirection....
-                string strToken = token;
-                char * tokHold = 0;
-                char * tok2 = 0;
-                int inRedirFlag=0, outRedFlag=0, outRedFlag2=0;
-                tokHold = new char[strToken.size()+2];
-                strcpy(tokHold, strToken.c_str());
-//----------------------CHECK curr token for redirection ----------------------                
-                if(strToken.find('<') != -1)
-                {
-                    inRedirFlag = 1;
-                    //cout << strToken << endl;
-                }
-                else if(strToken.find(">") != -1)
-                {
-                    if(strToken[strToken.find(">") + 1] == '>')
-                    {
-                        outRedFlag2 = 1;
-                    }
-                    else
-                        outRedFlag = 1;
-                }
-                
-
-//-------------------------------PIPE--------------------------------------                
-                    char del2[] = "< >";
-                    vector<string> hold2;
-                    tok2 = strtok_r(tokHold, del2, &savptr2);
-                    while(tok2 != NULL)
-                    {
-                        //cout << tok2 << endl;
-                        hold2.push_back(tok2);
-                        tok2 = strtok_r(NULL, del2, &savptr2);
-                    }
-//-------------------loop to get parsed data into array for execvp-------------
-                    char **argv = new char*[hold2.size()+1];
-                    for(unsigned i=0; i<hold2.size();i++)
-                    {
-                        if(hold2.at(i) == "exit")
-                        {
-                            exit(1);
-                        }
-                        argv[i] = new char[hold2.at(i).size()+1];
-                        strcpy(argv[i], hold2.at(i).c_str());
-                        argv[hold2.size()] = 0;
-                    }
-
-                    //input now parsed into appropriate form (ie: [cat, make])
-                    cout << "inRedirFlag: " << inRedirFlag << endl;
-                    if(inRedirFlag !=0 )
-                    {
-                        int fd2 = open(argv[1], O_RDONLY | O_CREAT, 0777);
-                        cout << fd2 << endl;
-                        if(fd2 == -1)
-                        {
-                            perror("open:229");
-                            exit(1);
-                        }
-                        int oldstdout = dup(1);
-                        if(oldstdout == -1)
-                        {
-                            perror("dup:253");
-                            exit(1);
-                        }
-                        if(-1 == close(0))
-                        {       
-                            perror("close:258");
-                            exit(1);
-                        }   
-                        if(-1 == dup(fd2))
-                        {
-                            perror("dup:263");
-                            exit(1);
-
-                        }
-                        
-                    }
-
-                //cout << "pipeTrip;269: " << pipeTrip << endl;
-                int fd[2];
-                if(pipe(fd)==-1)
-                {
-                    perror("pipe:273");
-                    exit(1);
-                }
-
-                int pid = fork();
-                if(pid == -1)
-                {
-                    perror("fork:281");
-                    exit(1);
-                }
-                else if(pid == 0) //child
-                {   
-                    //execvp should be in here. Child writing to pipe maybe
-                    //ERROR CHECK
-                    if(pipeTrip != 0) //WRITE to pipe
-                    {
-                        close(fd[0]); //close pipe-read b/c not used
-                        close(STDOUT_FILENO); //close stdout
-                        dup(fd[1]); //copy pipe write to lowest available 
-                                    //position
-                        execvp(argv[0], argv);
-                    }
-                    else if(inRedirFlag != 0) //execvp normally
-                    {
-                        cout << "here normal" << endl; 
-                        if(-1 == execvp(argv[0], argv))
-                        {
-                            perror("execvp:300");
-                            exit(1);
-                        }
-                    }
-                    else
-                        if(-1 == execvp(argv[0], argv))
-                        {
-                            perror("execvp:307");
-                            exit(1);
-                        }
-
-                }
-                else if(pid > 0) //parent 
-                {               //READ from pipe
-                    wait(0); 
-                    //need another fork to execute right side of pipe
-                    cout << "token:" << token << endl;
-                    token = strtok_r(NULL, del, &savptr1);
-                    cout << "token after inc:" << token << endl;
-                    inRedirFlag=0;
-                    cout << "Redirflag after" << inRedirFlag << endl;
-
-                }
-                
-
-
-                //token = strtok_r(NULL, del, &savptr1);
-            }
-            //EXIT prog after entire string parsed!!
-            exit(1);
-            }
 //---------------------REVISED RSHELL -----------------------------------------
             else
             {
                 fork_pipe(tokens.size(), tokens, redirect_indicator);
-
-
-
+                cout << "returned fully " << endl;
             }
             
         }
