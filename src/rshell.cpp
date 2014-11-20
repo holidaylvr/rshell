@@ -171,7 +171,7 @@ int fork_pipe(int n, vector<string> arg_list, vector<int> redir_flags)
             {
                 cout << "168 " << endl;
                 cout << "173 " << argv[1] << endl;
-                if(-1 == (in = open(argv[1], O_RDONLY | O_CREAT, 0777)))
+                if(-1 == (in = open(argv[1], O_RDONLY | O_CREAT, 1777)))
                 {
                     perror("open 167");
                     exit(1);
