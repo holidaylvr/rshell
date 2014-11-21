@@ -83,7 +83,7 @@ int fork_pipe(int n, vector<string> arg_list, vector<int> redir_flags)
             //cout << "74 " << token_temp << endl;
             token_temp = strtok_r(NULL, del2, &savptr_temp);
         }
-        for(int j=0; j < single_cmd.size(); j++)
+        for(unsigned j=0; j < single_cmd.size(); j++)
         {
             argv[j] = new char[single_cmd.at(j).size()+1];
             strcpy(argv[j], single_cmd.at(j).c_str());
@@ -165,7 +165,7 @@ int fork_pipe(int n, vector<string> arg_list, vector<int> redir_flags)
         //cerr << "144 " << endl;
         
         argv = new char*[single_cmd.size()+1]; 
-        for(int j=0; j < single_cmd.size(); j++)
+        for(unsigned j=0; j < single_cmd.size(); j++)
         {
             argv[j] = new char[single_cmd.at(j).size()+1];
             strcpy(argv[j], single_cmd.at(j).c_str());
@@ -449,11 +449,7 @@ int main ()
                             }
                             else if (pid2 == 0) //child
                             {
-                                    if (execvp(argv[0],argv) != -1 && orTrip == 1)
-                                    {
-                                            exit (1);
-                                    }
-                                    else if( -1 == execvp(argv[0], argv))
+                                    if( -1 == execvp(argv[0], argv))
                                     {
                                             perror("execvp");
                                             if(andTrip == 1)
@@ -466,6 +462,7 @@ int main ()
                                             }
                                             exit(1);
                                     }
+                                    exit(1);
                             }
                             else //parent
                             {   
