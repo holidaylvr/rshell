@@ -1,8 +1,6 @@
 RSHELL
 ==========
 
-Licensing Information: READ LICENSE
----
 Project source can be downloaded from https://github.com/holidaylvr/rshell.git
 ----
 
@@ -41,6 +39,7 @@ Timer.h
 ./tests:
 ls.script
 exec.script
+pipe.script
 ```
 
 About Program
@@ -52,6 +51,11 @@ In this assignment, I attempted to make a simple command shell comprising of all
 The way the program works is the user is prompted a line that consists of the users login info, their host name, and the '$' symbol, which is immediately followed by the area for user input. The user then enters the command, and the command is executed and printed to the terminal. The process is intended to continue as such until the user inputs 'exit', which then causes the program to exit.
 
 For example, if the user enters 'ls', the program will print to the terminal all the contents in the current directory. If the user then enters 'ls -a', the program will print all the files in the current directory including the hidden files.
+
+UPDATE 11/20/14:
+RSHELL now has the ability to pipe and redirect commands! Just Like a real-life bash (with some limitations naturally). 
+
+for example, if the user enters 'cat < file | tr a-z A-Z | tee new | tr A-Z a-z > new2' RSHELL will redirect the input from 'file' to cat, which will then be piped to 'tr' which will be piped to tee, which creates a new file, and so on. I am sure you know what that command does and do not need me to walk you through it.
 
 LS
 ------
@@ -99,25 +103,37 @@ This program is developed to write a simple command shell called "RShell."
 - Have special built in command "exit" to exit RSHELL and return to your local SHELL
 
 
-Bugs
+Bugs...SO many bugs. Need an exterminator.
 ---
+RSHELL
+------
 1. Can only run RSHELL within itself 4 times before encountering "execvp:fork" error. Believe this issue has to due with my inadvertent fork() call in my main. I believe its hogging resources. 
 
 2. Combining commands with only a single `&` produces slightly different results compared to bash.
 
-3.Cannot handle single `|`. RSHELL is supposed to perform slightly second cmd but RSHELL performs both.
+3. Cannot handle single `|`. RSHELL is supposed to perform slightly second cmd but RSHELL performs both.
 
-4.Cannot handle multiple combinations of `&&`. (ie: ls &&&& ls performs both ls commands in my shell). Parsing error with strtok_r()
+4. Cannot handle multiple combinations of `&&`. (ie: ls &&&& ls performs both ls commands in my shell). Parsing error with strtok_r()
 
-5.Cannot handle `#` (or any combination) after a cmd. RSHELL treats this simply as the cmd. Another parsing error with strtok_r()
+5. Cannot handle `#` (or any combination) after a cmd. RSHELL treats this simply as the cmd. Another parsing error with strtok_r()
 
-6.Cannot properly start a command string with `&&` or `||`. My shell parses too vigorously and dismisses these invalid commands. Treats such cases as if the connectors do not exist.
+6. Cannot properly start a command string with `&&` or `||`. My shell parses too vigorously and dismisses these invalid commands. Treats such cases as if the connectors do not exist.
 
-7.Cannot properly handle echo-ing into a file. (ie: `echo test > example` in my shell simply echoes the result.
+7. Cannot properly handle echo-ing into a file. (ie: `echo test > example` in my shell simply echoes the result.
 
-8.RSHELL cannot handle the command cd. We were not supposed to implement this in the assignment though.
+8. RSHELL cannot handle the command cd. We were not supposed to implement this in the assignment though.
 
-9.Up arrow to bring up previous commands does not work. 
+9. Up arrow to bring up previous commands does not work. 
+
+UPDATED 11/20/14
+
+10. Program cannot loop while implementing the piping/redirecting funcionality. I found the source was the way I was handling (or rather not) my main fork. I attempted to fix this but but it simply reintroduced far too many bugs. I figured it would be better to have code that works well on a single process at a time rather than no proceses at a time.
+
+11. Cannot handle 'cat < file > file2'
+
+12. Sometimes randomly throughout code execution the program will create random files with pieces of names (ie: 'tr', 'a-z', 'echo'). I believe this bug is caused when a full command is invalid and it only executes partially.
+
+13. The previous RSHELL implemenatation was effected by the new version.. Still unsure as to the severity. (ie: 'echo hey && fart' executes when it should not).
 
 LS
 -----
