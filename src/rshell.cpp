@@ -55,8 +55,6 @@ int new_proc(int in, int out, char ** cmd)
 int fork_pipe(int n, vector<string> arg_list, vector<int> redir_flags)
 {
     //cout << "HERE " << endl;
-    int i=0;
-    pid_t pid;
     int in, fd[2];
     in = 0; //first process should read from STDIN... unless other redir flag set
             //determine redir flag below! ! ! ! ! ! ! -------------------------------->  ! ! ! ! ! ! !  ! !
@@ -335,13 +333,10 @@ int main ()
             getline(cin, parse);
             findComment = parse.find("#");
             //all these variable will allow me to see what is contained in user input
-            int findAnd, findPipe, findInRedir, findOutRedir;
+            int findAnd, findPipe;//, findInRedir, findOutRedir;
             findAnd = parse.find("&&");
             findPipe = parse.find("|");
-            findInRedir = parse.find("<");
-            findOutRedir = parse.find(">");
-            int orTrip=0,andTrip=0, pipeTrip=0, inRedirTrip=0, outRedirTrip=0;
-            int outRedirTrip2=0;
+            int orTrip=0,andTrip=0;
             //if find #, replace with null so that parsing treats it as end of array
             //source of one of my bugs
             if(findComment != -1)
@@ -362,29 +357,8 @@ int main ()
                     //cout << "found ||" << endl;
                     orTrip = 1;
                 }
-                else
-                {
-                    pipeTrip = 1;
-                    //cout << "found pipe: " << findPipe << endl;
-                }
-            }
-            if(findInRedir != -1)
-            {
-                inRedirTrip = 1;
-                //cout << "found input redirection: " << endl;
-            }
-            if(findOutRedir != -1)
-            {
-                if(parse[findOutRedir + 1] == '>')
-                {
-                    outRedirTrip2 =1;
-                    //cout << "found output redirection2" << endl;
-                }
-                else
-                {
-                    outRedirTrip = 1;
-                    //cout << "found output redirection: " << endl;
-                }
+                
+                               
             }
             char del[] = ";|&"; //delimiter to signal diff cmd
             char *token, *token2;
@@ -494,9 +468,7 @@ int main ()
             else
             {
                 //cerr << "down here " << endl; 
-                char *token3; //
                 string token4; //
-                char *savptr3; //
                 char* replace2=0; //
                 replace2 = new char[parse.size()+2]; //
                 vector<string> tokens; //
@@ -510,11 +482,11 @@ int main ()
                     //cout << "215 " <<  token << endl;
 
                     //will push indicators into vector for reference in pipe_fork
-                    if(token4.find("<")!=-1){
+                    if((int)token4.find("<")!=-1){
                         redirect_indicator.push_back(0);
                         //cout << "pushed 0 " << endl;
                     }
-                    else if(token4.find('>')!=-1)
+                    else if((int)token4.find('>')!=-1)
                     {
                         if(token4[token4.find('>')+1] == '>')
                         {
@@ -536,7 +508,6 @@ int main ()
                 
                     token = strtok_r(NULL, del, &savptr1);
                 }
-                char ** cmd  = new char*[tokens.size()];
                 fork_pipe(tokens.size(), tokens, redirect_indicator);
                 //cout << "returned fully " << endl;
             }
