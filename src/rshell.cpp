@@ -15,7 +15,7 @@ using namespace std;
 
 int new_proc(int in, int out, char ** cmd)
 {
-    cout << "in new proc " << endl;
+    //cout << "in new proc " << endl;
     pid_t pid;
 
     if( (pid = fork()) == -1 )
@@ -54,7 +54,7 @@ int new_proc(int in, int out, char ** cmd)
 
 int fork_pipe(int n, vector<string> arg_list, vector<int> redir_flags)
 {
-    cout << "HERE " << endl;
+    //cout << "HERE " << endl;
     int i=0;
     pid_t pid;
     int in, fd[2];
@@ -70,10 +70,10 @@ int fork_pipe(int n, vector<string> arg_list, vector<int> redir_flags)
     token_temp = strtok_r(replace_temp, del2, &savptr_temp);
 
 //-----------------------------------------------------------------------------
-    cout << "68: i " <<  n << endl;    
+    //cout << "68: i " <<  n << endl;    
     for(int i=0; i < n-1; i++) //all but last processes created here
     {
-        cout << "loop " <<  " i " << i << endl;
+        //cout << "loop " <<  " i " << i << endl;
         strcpy(replace_temp, arg_list.at(i).c_str());    
         token_temp = strtok_r(replace_temp, del2, &savptr_temp);
 
@@ -87,7 +87,7 @@ int fork_pipe(int n, vector<string> arg_list, vector<int> redir_flags)
         {
             argv[j] = new char[single_cmd.at(j).size()+1];
             strcpy(argv[j], single_cmd.at(j).c_str());
-            cout << "81 " << argv[j] << endl;
+            //cout << "81 " << argv[j] << endl;
             argv[single_cmd.size()] = 0;
         }
         single_cmd.clear();//clear up vector
@@ -110,7 +110,7 @@ int fork_pipe(int n, vector<string> arg_list, vector<int> redir_flags)
                 perror("open:94");
                 exit(1);
             }
-            cout << in  << " 100 "<< endl;
+            //cout << in  << " 100 "<< endl;
             
         }
         else if(redir_flags.at(i) == 1)
@@ -129,7 +129,7 @@ int fork_pipe(int n, vector<string> arg_list, vector<int> redir_flags)
         }
         else if(redir_flags.at(i) == 2)
         {
-            cout << "out2 115 " << endl;
+            //cout << "out2 115 " << endl;
             if(-1 == (in = open(argv[0], O_RDWR | O_APPEND, 0777)))
             {
                 perror("open:117 ");
@@ -141,8 +141,8 @@ int fork_pipe(int n, vector<string> arg_list, vector<int> redir_flags)
 
         //dont need to write to pipe, child does that
         close(fd[1]);
-        cout << "returned 128" << endl;
-        cout << "i " << i << endl;
+        //cout << "returned 128" << endl;
+        //cout << "i " << i << endl;
         //keep read end of pipe, next child will read from here
         in = fd[0];
 
@@ -169,14 +169,14 @@ int fork_pipe(int n, vector<string> arg_list, vector<int> redir_flags)
         {
             argv[j] = new char[single_cmd.at(j).size()+1];
             strcpy(argv[j], single_cmd.at(j).c_str());
-            cout << "149 " << argv[j] << endl;
+            //cout << "149 " << argv[j] << endl;
             //cout << "command size 149 " << single_cmd.size() << endl;
-            cout << "j " << j << endl;
+            //cout << "j " << j << endl;
             //argv[arg_list.size()+1] = 0;
         }
         for(int k=0; k < size_curr_parse; k++)
         {
-            cout << "166: " << argv[k] << endl;
+            //cout << "166: " << argv[k] << endl;
         }
         //cout << redir_flags.size() << " flag size " << endl;
         
@@ -195,8 +195,8 @@ int fork_pipe(int n, vector<string> arg_list, vector<int> redir_flags)
         //case where only one cmd "cat < test.cpp"
         if(redir_flags.at(n-1) == 1)
         {
-            cout << "good, made it " << endl;
-            cout << argv[size_curr_parse-1] << endl;
+            //cout << "good, made it " << endl;
+            //cout << argv[size_curr_parse-1] << endl;
             if(-1 == (in = open(argv[size_curr_parse-1], O_RDWR| O_TRUNC | O_CREAT, 00700)))
             {
                 perror("open 182");
@@ -213,8 +213,8 @@ int fork_pipe(int n, vector<string> arg_list, vector<int> redir_flags)
         }
         if(redir_flags.at(n-1) == 2)
         {
-            cout << "good, made it2 " << endl;
-            cout << argv[size_curr_parse-1] << endl;
+            //cout << "good, made it2 " << endl;
+            //cout << argv[size_curr_parse-1] << endl;
             if(-1 == (in = open(argv[size_curr_parse-1], O_RDWR | O_APPEND, 00700)))
             {
                 perror("open 182");
@@ -231,11 +231,11 @@ int fork_pipe(int n, vector<string> arg_list, vector<int> redir_flags)
         }
         if(redir_flags.at(0) == 0 && redir_flags.size() == 1)
         {
-            cout << "input redir 161 " << endl;
+            //cout << "input redir 161 " << endl;
             if(n==1)
             {
-                cout << "168 " << endl;
-                cout << "173 " << argv[1] << endl;
+                //cout << "168 " << endl;
+                //cout << "173 " << argv[1] << endl;
                 if(-1 == (in = open(argv[1], O_RDONLY | O_CREAT, 00700)))
                 {
                     perror("open 167");
@@ -304,7 +304,7 @@ int fork_pipe(int n, vector<string> arg_list, vector<int> redir_flags)
         }*/
 
         //execute last stage with current proc
-        cout << "execute betch " << endl;
+        //cout << "execute betch " << endl;
         if(-1 == execvp(argv[0], argv))
         {
             perror("execvp 222");
@@ -396,8 +396,8 @@ int main ()
 
             token = strtok_r(replace, del, &savptr1);
 //--------------------------OLD RSHELL ----------------------------------------
-            cout << "ortrip " << orTrip << endl;
-            cout << andTrip << " andTrip " << endl;
+            //cout << "ortrip " << orTrip << endl;
+            //cout << andTrip << " andTrip " << endl;
             string quit = token;
             if(quit  == "exit")
             {
@@ -496,7 +496,7 @@ int main ()
 //---------------------REVISED RSHELL -----------------------------------------
             else
             {
-                cerr << "down here " << endl; 
+                //cerr << "down here " << endl; 
                 char *token3; //
                 string token4; //
                 char *savptr3; //
@@ -541,7 +541,7 @@ int main ()
                 }
                 char ** cmd  = new char*[tokens.size()];
                 fork_pipe(tokens.size(), tokens, redirect_indicator);
-                cout << "returned fully " << endl;
+                //cout << "returned fully " << endl;
             }
             
         }
