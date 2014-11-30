@@ -1,11 +1,11 @@
 #include <iostream>
 #include <sys/stat.h>
 #include <vector>
-#include <unistd.h> //for execvp
-#include <stdio.h> //for perror
-#include <errno.h> //perror 
-#include <sys/types.h> //for wait
-#include <sys/wait.h> //for wait
+#include <unistd.h> 
+#include <stdio.h> 
+#include <errno.h> 
+#include <sys/types.h>
+#include <sys/wait.h> 
 #include <string>
 #include <string.h>
 #include <stdlib.h>
@@ -31,6 +31,7 @@ int find_execv(const char *path_find, char *const argv[])
     string spath;
     char *savptr, *token;
     const char del[] = ":";
+    //parse PATH by ":" to get sub paths
     token = strtok_r(path,del,&savptr);
      
     while(token != 0) 
@@ -40,7 +41,7 @@ int find_execv(const char *path_find, char *const argv[])
         if(dirp == 0)
         {
             //if can't open dir, need to inc token and try again
-            perror("opendir:35");
+            //perror("opendir:35");
             token  = strtok_r(NULL, del, &savptr);
             continue;
         }
@@ -107,9 +108,9 @@ int new_proc(int in, int out, char ** cmd)
              }//we will write to pipe
             close(out);//close it. Copied it to STDIN
         }
-        if( -1 == execvp(cmd[0], cmd))
+        if( -1 == find_execv(cmd[0], cmd))
         {
-                perror("execvp:37");
+                perror("find_execv:110");
                 exit(1);
         }
     }
@@ -294,9 +295,9 @@ int fork_pipe(int n, vector<string> arg_list, vector<int> redir_flags)
         }
 
         //execute last stage with current proc
-        if(-1 == execvp(argv[0], argv))
+        if(-1 == find_execv(argv[0], argv))
         {
-            perror("execvp 222");
+            perror("find_execv:299");
             exit(1);
         }
         return 1;
@@ -398,7 +399,7 @@ int main ()
                                     token2 = strtok_r(NULL, delim2, &savptr2);
                             }
 
-                            //loop to get parsed data into array for execvp
+                            //loop to get parsed data into array for find_execv
                             char **argv = new char*[hold.size()+1];
                             for(unsigned i=0; i<hold.size();i++)
                             {
@@ -425,11 +426,21 @@ int main ()
                                 else if(0 == strcmp(argv[1], ".."))
                                 {
                                     //implement
+                                    chdir("..");
+                                    token = strtok_r(NULL, del, &savptr1);
+                                    continue;
                                 }
                                 //user supplies path
                                 else
                                 {
                                     cout << "user supllied path" << endl;
+                                    DIR *dirp = opendir(argv[1]);
+                                    if(dirp == 0)
+                                    {
+                                        cout << "rshell: cd: " << argv[1] 
+                                             << ": no such file or directory"
+                                             << endl;
+                                    }
                                     chdir(argv[1]);
                                     token = strtok_r(NULL, del, &savptr1);
                                     continue;
