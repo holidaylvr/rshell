@@ -1,17 +1,88 @@
-#include<iostream>
+#include <iostream>
 #include <sys/stat.h>
 #include <vector>
-#include<unistd.h> //for execvp
-#include<stdio.h> //for perror
-#include<errno.h> //perror 
-#include<sys/types.h> //for wait
-#include<sys/wait.h> //for wait
-#include<string>
+#include <unistd.h> //for execvp
+#include <stdio.h> //for perror
+#include <errno.h> //perror 
+#include <sys/types.h> //for wait
+#include <sys/wait.h> //for wait
+#include <string>
 #include <string.h>
 #include <stdlib.h>
 #include <fcntl.h>
+#include <dirent.h>
 
 using namespace std;
+
+void find_execv(const char *path_find, char *const argv[])
+{
+    const char *var = "PATH";
+    char *path = getenv(var);
+    /*if(path!=0)
+    {
+        cout << path << endl;
+    }*/
+    
+    vector<string> parsed_path; 
+    string spath;
+    char *savptr, *token;
+    const char del[] = ":";
+    token = strtok_r(path,del,&savptr);
+     
+    while(token != 0) 
+    {
+        //open sub directory so we can look for cmd
+        cout << "looking in: " <<  token << endl; 
+        DIR *dirp = opendir(token);
+        if(dirp == 0)
+        {
+            //if can't open dir, need to inc token and try again
+            perror("opendir:35");
+            
+            //exit(1);
+            cout << token << endl;
+            token  = strtok_r(NULL, del, &savptr);
+            continue;
+        }
+
+        dirent *direntp;
+        if(0 == strcmp(token, "/bin"))
+                cout << "in /bin " << endl;
+        while(direntp = readdir(dirp))
+        {
+            if(direntp == 0)
+            {   
+                perror("readdir: 43");
+                exit(1);
+            }
+            if(0 == strcmp(direntp->d_name,path_find))
+            {
+                cout << "Found the sub path for the cmd!! "
+                    << "in dir: " << token << endl;
+                string f_path = token;
+                f_path += "/";
+                f_path += direntp->d_name;
+                cout << f_path << endl;
+                if(-1 == execv(f_path.c_str(), argv))
+                {
+                    perror("execv:50");
+                    exit(1);
+                }
+            }   
+
+        }
+        cout << endl;
+                
+        //spath = token;
+        //parsed_path.push_back(spath);
+        if(-1 == closedir(dirp))
+        {
+            perror("closedir:72");
+        }
+        token  = strtok_r(NULL, del, &savptr);
+    }
+    cout << "Path for cmd not found :( " << endl;
+}
 
 int new_proc(int in, int out, char ** cmd)
 {
@@ -423,7 +494,7 @@ int main ()
                             }
                             else if (pid2 == 0) //child
                             {
-                                    if( -1 == execvp(argv[0], argv))
+                                    /*if( -1 == execvp(argv[0], argv))
                                     {
                                             perror("execvp");
                                             if(andTrip == 1)
@@ -436,7 +507,8 @@ int main ()
                                             }
                                             exit(1);
                                     }
-                                    exit(1);
+                                    exit(1);*/
+                                    find_execv(argv[0], argv);
                             }
                             else //parent
                             {   
