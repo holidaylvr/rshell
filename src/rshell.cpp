@@ -121,7 +121,6 @@ int fork_pipe(int n, vector<string> arg_list, vector<int> redir_flags)
     //cout << "HERE " << endl;
     int in, fd[2];
     in = 0; //first process should read from STDIN... unless other redir flag set
-            //determine redir flag below! ! ! ! ! ! ! -------------------------------->  ! ! ! ! ! ! !  ! !
     char *token_temp, *savptr_temp, *replace_temp;
     char del2[] = "< >";
     vector<string> single_cmd;
@@ -132,17 +131,14 @@ int fork_pipe(int n, vector<string> arg_list, vector<int> redir_flags)
     token_temp = strtok_r(replace_temp, del2, &savptr_temp);
 
 //-----------------------------------------------------------------------------
-    //cout << "68: i " <<  n << endl;    
     for(int i=0; i < n-1; i++) //all but last processes created here
     {
-        //cout << "loop " <<  " i " << i << endl;
         strcpy(replace_temp, arg_list.at(i).c_str());    
         token_temp = strtok_r(replace_temp, del2, &savptr_temp);
 
         while(token_temp != 0)
         {
             single_cmd.push_back(token_temp);
-            //cout << "74 " << token_temp << endl;
             token_temp = strtok_r(NULL, del2, &savptr_temp);
         }
         for(unsigned j=0; j < single_cmd.size(); j++)
@@ -154,17 +150,13 @@ int fork_pipe(int n, vector<string> arg_list, vector<int> redir_flags)
         }
         single_cmd.clear();//clear up vector
 
-        //cout << "88" << argv[0] << endl;
         if(-1 == pipe(fd))
         {
             perror("pipe 99");
             exit(1);
         }
-        //fd[1]write end of the pipe we carry in from prev iteration....
         
         //need to change STDIN if input redir
-        //cout << " i " << i << endl;
-        //cout << redir_flags.at(i) << " 95 " <<  endl;
         if(redir_flags.at(i) == 0)
         {
             if( -1 == (in = open(argv[1], O_RDONLY | O_CREAT, 00700)))
@@ -172,8 +164,6 @@ int fork_pipe(int n, vector<string> arg_list, vector<int> redir_flags)
                 perror("open:94");
                 exit(1);
             }
-            //cout << in  << " 100 "<< endl;
-            
         }
         else if(redir_flags.at(i) == 1)
         {
@@ -191,7 +181,6 @@ int fork_pipe(int n, vector<string> arg_list, vector<int> redir_flags)
         }
         else if(redir_flags.at(i) == 2)
         {
-            //cout << "out2 115 " << endl;
             if(-1 == (in = open(argv[0], O_RDWR | O_APPEND, 0777)))
             {
                 perror("open:117 ");
@@ -230,8 +219,7 @@ int fork_pipe(int n, vector<string> arg_list, vector<int> redir_flags)
             //cout << "166: " << argv[k] << endl;
         }
         
-        
-     //last stage of pipe, set STDIN to be read end of prev pipe and output 
+        //last stage of pipe, set STDIN to be read end of prev pipe and output 
         //to the original fd 1
         if(in != 0)
         {
@@ -242,7 +230,6 @@ int fork_pipe(int n, vector<string> arg_list, vector<int> redir_flags)
             }
         }
 
-        //case where only one cmd "cat < test.cpp"
         if(redir_flags.at(n-1) == 1)
         {
             if(-1 == (in = open(argv[size_curr_parse-1], O_RDWR| O_TRUNC | O_CREAT, 00700)))
@@ -369,8 +356,6 @@ int main ()
                 }
                 else
                         pipeTrip = 1;
-                
-                               
             }
             char del[] = ";|&"; //delimiter to signal diff cmd
             char *token, *token2;
@@ -389,11 +374,8 @@ int main ()
             }   
             if(pipeTrip == 0 && redirTrip ==0)
             {
-                    //cout << "here " << endl;
                     while (token != NULL)
                     {
-                            //cout << "pased token first round: " << endl;
-                            //cout << token << endl;
                             string fakeTok = token;
                             char* replace2=0;
                             replace2 = new char[fakeTok.size()+1];
@@ -433,20 +415,7 @@ int main ()
                             }
                             else if (pid2 == 0) //child
                             {
-                                    /*if( -1 == execvp(argv[0], argv))
-                                    {
-                                            perror("execvp");
-                                            if(andTrip == 1)
-                                            {
-                                                    exit(1);
-                                            }
-                                            else if(orTrip == 1)
-                                            {
-                                                    exit(1);
-                                            }
-                                            exit(1);
-                                    }
-                                    exit(1);*/
+                                    //own execv function to man search PATH
                                     if(-1 == find_execv(argv[0], argv))
                                     {
                                         perror("find_execv:509");
@@ -461,12 +430,14 @@ int main ()
                                     }
                                     else
                                     {  
-                                            if(status > 0 && andTrip == 1) //break out if && failed
+                                            if(status > 0 && andTrip == 1) 
+                                            //break out if && failed
                                             {
                                                     break;
 
                                             }
-                                            if(WEXITSTATUS(status)==0 && orTrip==1) //break if cmd succeeds and || cmd 
+                                            if(WEXITSTATUS(status)==0 && orTrip==1) 
+                                            //break if cmd succeeds and || cmd 
                                             {
                                                     break;
                                             }
@@ -494,8 +465,6 @@ int main ()
                 while(token != NULL)
                 {
                     token4  = token;
-                    //cout << "215 " <<  token << endl;
-
                     //will push indicators into vector for reference in pipe_fork
                     if((int)token4.find("<")!=-1){
                         redirect_indicator.push_back(0);
@@ -519,8 +488,6 @@ int main ()
                     }
 
                     tokens.push_back(token);
-                
-                
                     token = strtok_r(NULL, del, &savptr1);
                 }
                 fork_pipe(tokens.size(), tokens, redirect_indicator);
