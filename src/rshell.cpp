@@ -14,14 +14,13 @@
 
 using namespace std;
 
-void find_execv(const char *path_find, char *const argv[])
+//my own function that uses execv and manually searches for proper path
+//for cmds
+int find_execv(const char *path_find, char *const argv[])
 {
+    //get get curr $PATH
     const char *var = "PATH";
     char *path = getenv(var);
-    /*if(path!=0)
-    {
-        cout << path << endl;
-    }*/
     
     vector<string> parsed_path; 
     string spath;
@@ -32,22 +31,16 @@ void find_execv(const char *path_find, char *const argv[])
     while(token != 0) 
     {
         //open sub directory so we can look for cmd
-        cout << "looking in: " <<  token << endl; 
         DIR *dirp = opendir(token);
         if(dirp == 0)
         {
             //if can't open dir, need to inc token and try again
             perror("opendir:35");
-            
-            //exit(1);
-            cout << token << endl;
             token  = strtok_r(NULL, del, &savptr);
             continue;
         }
 
         dirent *direntp;
-        if(0 == strcmp(token, "/bin"))
-                cout << "in /bin " << endl;
         while(direntp = readdir(dirp))
         {
             if(direntp == 0)
@@ -57,12 +50,10 @@ void find_execv(const char *path_find, char *const argv[])
             }
             if(0 == strcmp(direntp->d_name,path_find))
             {
-                cout << "Found the sub path for the cmd!! "
-                    << "in dir: " << token << endl;
+                //adding necessary mods to provide execv with FULL directory
                 string f_path = token;
                 f_path += "/";
                 f_path += direntp->d_name;
-                cout << f_path << endl;
                 if(-1 == execv(f_path.c_str(), argv))
                 {
                     perror("execv:50");
@@ -71,17 +62,14 @@ void find_execv(const char *path_find, char *const argv[])
             }   
 
         }
-        cout << endl;
-                
-        //spath = token;
-        //parsed_path.push_back(spath);
         if(-1 == closedir(dirp))
         {
             perror("closedir:72");
         }
         token  = strtok_r(NULL, del, &savptr);
     }
-    cout << "Path for cmd not found :( " << endl;
+    //return -1 if path not found (error)
+    return -1;
 }
 
 int new_proc(int in, int out, char ** cmd)
@@ -205,20 +193,15 @@ int fork_pipe(int n, vector<string> arg_list, vector<int> redir_flags)
                 exit(1);
             }
         }
-        //cout << "in 123 " << in << endl;
         new_proc(in, fd[1], argv);
 
         //dont need to write to pipe, child does that
         close(fd[1]);
-        //cout << "returned 128" << endl;
-        //cout << "i " << i << endl;
         //keep read end of pipe, next child will read from here
         in = fd[0];
 
      }
 //-----------------------------------------------------------------------------
-        //cout << "134 " <<  token_temp << endl;
-        
         if(n != 0)
         {
             strcpy(replace_temp, arg_list.at(n-1).c_str());    
@@ -227,27 +210,20 @@ int fork_pipe(int n, vector<string> arg_list, vector<int> redir_flags)
         while(token_temp != 0)
         {
             single_cmd.push_back(token_temp);
-            //cerr << "142 " << token_temp << endl;
             token_temp = strtok_r(NULL, del2, &savptr_temp);
         }
         int size_curr_parse = single_cmd.size();
-        //cerr << "144 " << endl;
         
         argv = new char*[single_cmd.size()+1]; 
         for(unsigned j=0; j < single_cmd.size(); j++)
         {
             argv[j] = new char[single_cmd.at(j).size()+1];
             strcpy(argv[j], single_cmd.at(j).c_str());
-            //cout << "149 " << argv[j] << endl;
-            //cout << "command size 149 " << single_cmd.size() << endl;
-            //cout << "j " << j << endl;
-            //argv[arg_list.size()+1] = 0;
         }
         for(int k=0; k < size_curr_parse; k++)
         {
             //cout << "166: " << argv[k] << endl;
         }
-        //cout << redir_flags.size() << " flag size " << endl;
         
         
      //last stage of pipe, set STDIN to be read end of prev pipe and output 
@@ -264,8 +240,6 @@ int fork_pipe(int n, vector<string> arg_list, vector<int> redir_flags)
         //case where only one cmd "cat < test.cpp"
         if(redir_flags.at(n-1) == 1)
         {
-            //cout << "good, made it " << endl;
-            //cout << argv[size_curr_parse-1] << endl;
             if(-1 == (in = open(argv[size_curr_parse-1], O_RDWR| O_TRUNC | O_CREAT, 00700)))
             {
                 perror("open 182");
@@ -282,8 +256,6 @@ int fork_pipe(int n, vector<string> arg_list, vector<int> redir_flags)
         }
         if(redir_flags.at(n-1) == 2)
         {
-            //cout << "good, made it2 " << endl;
-            //cout << argv[size_curr_parse-1] << endl;
             if(-1 == (in = open(argv[size_curr_parse-1], O_RDWR | O_APPEND, 00700)))
             {
                 perror("open 182");
@@ -300,11 +272,8 @@ int fork_pipe(int n, vector<string> arg_list, vector<int> redir_flags)
         }
         if(redir_flags.at(0) == 0 && redir_flags.size() == 1)
         {
-            //cout << "input redir 161 " << endl;
             if(n==1)
             {
-                //cout << "168 " << endl;
-                //cout << "173 " << argv[1] << endl;
                 if(-1 == (in = open(argv[1], O_RDONLY | O_CREAT, 00700)))
                 {
                     perror("open 167");
@@ -330,50 +299,9 @@ int fork_pipe(int n, vector<string> arg_list, vector<int> redir_flags)
                 }
             }
             close(0);
-            /*if(-1 == dup2(in,0))
-            {       
-                perror("dup2 263");
-                exit(1);
-            }*/
         }
-        /*else if(redir_flags.at(i) == 1 && redir_flags.size() == 1)
-        {
-            cout << "out 170 " << endl;
-            cout << size_curr_parse << " size pasre" << endl;
-            cout << "203 " << argv[size_curr_parse-1] << endl;
-            if(-1 == (in = open(argv[size_curr_parse-1], O_RDWR | O_CREAT, 00700)))
-            {
-                perror("open:175 ");
-                exit(1);
-            }
-            dup2(in,1);
-            close(in);
-            //argv[arg_list.size()-1] = 0;
-        }*/
-        /*else if(redir_flags.at(i) == 2 && redir_flags.size() ==1)
-        {
-            cout << "out2 178 " << endl;
-            if(-1 == (in = open(argv[size_curr_parse-1], O_RDWR | O_APPEND, 00700)))
-            {
-                perror("open:252 ");
-                exit(1);
-            }
-            dup2(in,1);
-            close(in);
-        }*/
-        /*if(in != 0)
-        //input and output to original fd
-        {
-            cout << "298 " << endl;
-            if(-1 == dup2(in,0))
-            {
-                perror("dup2 298");
-                exit(1);
-            }
-        }*/
 
         //execute last stage with current proc
-        //cout << "execute betch " << endl;
         if(-1 == execvp(argv[0], argv))
         {
             perror("execvp 222");
@@ -404,22 +332,27 @@ int main ()
             getline(cin, parse);
             findComment = parse.find("#");
             //all these variable will allow me to see what is contained in user input
-            int findAnd, findPipe;//, findInRedir, findOutRedir;
+            int findAnd, findPipe, find_inRedir, find_outRedir;
+            find_inRedir = parse.find("<");
+            find_outRedir = parse.find(">");
             findAnd = parse.find("&&");
             findPipe = parse.find("|");
-            int orTrip=0,andTrip=0;
+            int orTrip=0,andTrip=0, redirTrip=0, pipeTrip=0;
             //if find #, replace with null so that parsing treats it as end of array
             //source of one of my bugs
             if(findComment != -1)
             {
                 parse.at(findComment) = 0;
-                //cout << "found comment: " << endl;
             }
             if(findAnd != -1) //signal if user input has && 
             {
                 andTrip = 1;
                 //cout << "found `&&`: " << endl;
 
+            }
+            if(find_inRedir != -1 || find_outRedir != -1)
+            {
+                redirTrip = 1;
             }
             if(findPipe !=-1 )//need to check if pipe or `||`
             {
@@ -428,6 +361,8 @@ int main ()
                     //cout << "found ||" << endl;
                     orTrip = 1;
                 }
+                else
+                        pipeTrip = 1;
                 
                                
             }
@@ -441,14 +376,12 @@ int main ()
 
             token = strtok_r(replace, del, &savptr1);
 //--------------------------OLD RSHELL ----------------------------------------
-            //cout << "ortrip " << orTrip << endl;
-            //cout << andTrip << " andTrip " << endl;
             string quit = token;
             if(quit  == "exit")
             {
                 exit(1);
             }   
-            if(orTrip !=0 || andTrip !=0)
+            if(pipeTrip == 0 && redirTrip ==0)
             {
                     //cout << "here " << endl;
                     while (token != NULL)
@@ -508,7 +441,11 @@ int main ()
                                             exit(1);
                                     }
                                     exit(1);*/
-                                    find_execv(argv[0], argv);
+                                    if(-1 == find_execv(argv[0], argv))
+                                    {
+                                        perror("find_execv:509");
+                                        exit(1);
+                                    }
                             }
                             else //parent
                             {   
