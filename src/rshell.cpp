@@ -14,6 +14,11 @@
 
 using namespace std;
 
+void sig_handle(int sig)
+{
+    cout << "in the function" << endl;
+}
+
 //my own function that uses execv and manually searches for proper path
 //for cmds
 int find_execv(const char *path_find, char *const argv[])
@@ -314,6 +319,7 @@ int main ()
 {
         while (1)
         {   //infinite loop to run until `exit` command
+            signal(SIGINT, sig_handle);
             char* login = getlogin();
             //gets user info/id && prints to terminal
             if ( 0 ==  login)
