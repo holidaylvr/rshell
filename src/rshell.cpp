@@ -302,26 +302,31 @@ int fork_pipe(int n, vector<string> arg_list, vector<int> redir_flags)
         return 1;
 }
 
+
+//------------------------MAIN-------------------------------------------------
 int main ()
 {
         while (1)
         {   //infinite loop to run until `exit` command
+            //to catch the ctrl-c signal and not exit the parent prog
+            //WILL exit the child prog
             signal(SIGINT, sig_handle);
-            char* login = getlogin();
+            /*char* login = getlogin();
             //gets user info/id && prints to terminal
             if ( 0 ==  login)
             {
                 perror("getLogin()");
-            }
+            }*/
+            //display the current working directory
             char user[256];
-            if (-1 == gethostname(user, sizeof(user)))
+            if (0 == getcwd(user, sizeof(user)))
             {
-                perror("gethostname");
+                perror("getcwd");
             }
             int findComment;
             string parse="";
             //line outputs user info before prompt
-            cout << login << user << "$ ";
+            cout << user << "$ ";
             getline(cin, parse);
             findComment = parse.find("#");
             //all these variable will allow me to see what is contained in user input
@@ -371,7 +376,8 @@ int main ()
             if(quit  == "exit")
             {
                 exit(1);
-            }   
+            }
+            //when no pipes or redirection, use old rshell   
             if(pipeTrip == 0 && redirTrip ==0)
             {
                     while (token != NULL)
@@ -403,6 +409,33 @@ int main ()
                                     argv[i] = new char[hold.at(i).size()+1];
                                     strcpy(argv[i], hold.at(i).c_str());
                                     argv[hold.size()] = 0;
+                            }
+
+                            //check for 'cd'
+                            if(0 == strcmp(argv[0], "cd"))
+                            {
+                                //if cd to same dir, do nothing. Next token
+                                if(0 == strcmp(argv[1], "."))
+                                {
+                                    //leave dir alone
+                                    token = strtok_r(NULL, del, &savptr1);
+                                    continue;
+                                }
+                                //if user wants prev dir
+                                else if(0 == strcmp(argv[1], ".."))
+                                {
+                                    //implement
+                                }
+                                //user supplies path
+                                else
+                                {
+                                    cout << "user supllied path" << endl;
+                                    chdir(argv[1]);
+                                    token = strtok_r(NULL, del, &savptr1);
+                                    continue;
+                                }
+
+
                             }
 
                             //fork to actually execute cmds 
