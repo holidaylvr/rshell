@@ -16,7 +16,8 @@ using namespace std;
 
 void sig_handle(int sig)
 {
-    cout << "in the function" << endl;
+    //cout << "in the function" << endl;
+    cout << endl;
 }
 
 //my own function that uses execv and manually searches for proper path
@@ -415,8 +416,17 @@ int main ()
                             //check for 'cd'
                             if(0 == strcmp(argv[0], "cd"))
                             {
+                                //if user just enters `cd`, ignore
+                                if(hold.size() == 1)
+                                {
+                                    const char *var = "HOME";
+                                    char *path = getenv(var);
+                                    chdir(path);
+                                    token = strtok_r(NULL, del, &savptr1);
+                                    continue;        
+                                }
                                 //if cd to same dir, do nothing. Next token
-                                if(0 == strcmp(argv[1], "."))
+                                else if(0 == strcmp(argv[1], "."))
                                 {
                                     //leave dir alone
                                     token = strtok_r(NULL, del, &savptr1);
@@ -433,7 +443,7 @@ int main ()
                                 //user supplies path
                                 else
                                 {
-                                    cout << "user supllied path" << endl;
+                                    //cout << "user supllied path" << endl;
                                     DIR *dirp = opendir(argv[1]);
                                     if(dirp == 0)
                                     {
@@ -543,22 +553,6 @@ int main ()
 }
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+//BUGS:
+//cannot handle `~` being passed to cmd cd
+//cannot handle empty input
