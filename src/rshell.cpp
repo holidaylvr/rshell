@@ -342,6 +342,8 @@ int main ()
             cout << user << "$ ";
             getline(cin, parse);
             findComment = parse.find("#");
+            if(parse.size() == 0 )
+                    continue;
             //all these variable will allow me to see what is contained in user input
             int findAnd, findPipe, find_inRedir, find_outRedir;
             find_inRedir = parse.find("<");
@@ -464,19 +466,15 @@ int main ()
                                     DIR *dirp = opendir(argv[1]);
                                     if(dirp == 0)
                                     {
-                                        perror("opendir:469");
                                         cout << "rshell: cd: " << argv[1] 
                                              << ": no such file or directory"
                                              << endl;
                                     }
-                                    chdir(argv[1]);
+                                    if(-1 == chdir(argv[1]))
                                     token = strtok_r(NULL, del, &savptr1);
                                     continue;
                                 }
-
-
                             }
-
                             //fork to actually execute cmds 
                             int pid2 = fork();
                             int status = 0;
@@ -570,8 +568,7 @@ int main ()
         return 0;
 }
 
-
 //BUGS:
 //cannot handle `~` being passed to cmd cd
-//cannot handle empty input
-//
+//cannot handle empty input -- FIXED
+//throws error on correct cds now... Need to fix
