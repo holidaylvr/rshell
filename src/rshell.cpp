@@ -38,6 +38,13 @@ int find_execv(const char *path_find, char *const argv[])
     while(token != 0) 
     {
         //open sub directory so we can look for cmd
+        /*struct stat statbuf;
+        if(-1 == stat(token, &statbuf))
+        {
+            perror("stat");
+            token = strtok_r(NULL, del, &savptr);
+            continue;
+        }*/
         DIR *dirp = opendir(token);
         if(dirp == 0)
         {
@@ -76,6 +83,7 @@ int find_execv(const char *path_find, char *const argv[])
         token  = strtok_r(NULL, del, &savptr);
     }
     //return -1 if path not found (error)
+    cout << "rshell: " << token << ": command not found" << endl;
     return -1;
 }
 
@@ -312,7 +320,10 @@ int main ()
         {   //infinite loop to run until `exit` command
             //to catch the ctrl-c signal and not exit the parent prog
             //WILL exit the child prog
-            signal(SIGINT, sig_handle);
+            if(SIG_ERR == signal(SIGINT, sig_handle))
+            {
+                perror("signal:327");
+            }
             /*char* login = getlogin();
             //gets user info/id && prints to terminal
             if ( 0 ==  login)
@@ -421,7 +432,10 @@ int main ()
                                 {
                                     const char *var = "HOME";
                                     char *path = getenv(var);
-                                    chdir(path);
+                                    if(-1 == chdir(path))
+                                    {
+                                        perror("chdir:439");
+                                    }
                                     token = strtok_r(NULL, del, &savptr1);
                                     continue;        
                                 }
@@ -436,7 +450,10 @@ int main ()
                                 else if(0 == strcmp(argv[1], ".."))
                                 {
                                     //implement
-                                    chdir("..");
+                                    if(-1 == chdir(".."))
+                                    {
+                                        perror("chdir:457");
+                                    }
                                     token = strtok_r(NULL, del, &savptr1);
                                     continue;
                                 }
@@ -447,6 +464,7 @@ int main ()
                                     DIR *dirp = opendir(argv[1]);
                                     if(dirp == 0)
                                     {
+                                        perror("opendir:469");
                                         cout << "rshell: cd: " << argv[1] 
                                              << ": no such file or directory"
                                              << endl;
@@ -556,3 +574,4 @@ int main ()
 //BUGS:
 //cannot handle `~` being passed to cmd cd
 //cannot handle empty input
+//
