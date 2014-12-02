@@ -17,6 +17,8 @@ using namespace std;
 void sig_handle(int sig)
 {
     //cout << "in the function" << endl;
+    if(sig == SIGINT)
+    {}
     cout << endl;
 }
 
@@ -34,7 +36,7 @@ int find_execv(const char *path_find, char *const argv[])
     const char del[] = ":";
     //parse PATH by ":" to get sub paths
     token = strtok_r(path,del,&savptr);
-     
+    int flag=0; 
     while(token != 0) 
     {
         //open sub directory so we can look for cmd
@@ -53,9 +55,8 @@ int find_execv(const char *path_find, char *const argv[])
             token  = strtok_r(NULL, del, &savptr);
             continue;
         }
-
         dirent *direntp;
-        while(direntp = readdir(dirp))
+        while((direntp = readdir(dirp)))
         {
             if(direntp == 0)
             {   
@@ -73,6 +74,8 @@ int find_execv(const char *path_find, char *const argv[])
                     perror("execv:50");
                     exit(1);
                 }
+                flag = 1;
+                break;
             }   
 
         }
@@ -83,8 +86,11 @@ int find_execv(const char *path_find, char *const argv[])
         token  = strtok_r(NULL, del, &savptr);
     }
     //return -1 if path not found (error)
-    cout << "rshell: " << token << ": command not found" << endl;
-    return -1;
+    if(flag == 0)
+    {
+            cout << "rshell91: " << token << ": command not found" << endl;
+            return -1;
+    }
 }
 
 int new_proc(int in, int out, char ** cmd)
@@ -429,6 +435,7 @@ int main ()
                             //check for 'cd'
                             if(0 == strcmp(argv[0], "cd"))
                             {
+                                //cout << "cd section " << endl;
                                 //if user just enters `cd`, ignore
                                 if(hold.size() == 1)
                                 {
@@ -462,15 +469,32 @@ int main ()
                                 //user supplies path
                                 else
                                 {
+
                                     //cout << "user supllied path" << endl;
-                                    DIR *dirp = opendir(argv[1]);
+                                    char cwdir[256];
+                                    getcwd(cwdir,sizeof(cwdir));
+                                    //cout << "hey " << cwdir << endl;
+                                    string full_path = cwdir;
+                                    full_path += "/";
+                                    
+                                    //cout << "476 " << full_path << endl;
+                                    DIR *dirp = opendir(full_path.c_str());
                                     if(dirp == 0)
                                     {
-                                        cout << "rshell: cd: " << argv[1] 
+                                        cout << "rshell476: cd: " << argv[1] 
                                              << ": no such file or directory"
                                              << endl;
+                                             token = strtok_r(NULL, del, &savptr1);
+                                             continue;
                                     }
                                     if(-1 == chdir(argv[1]))
+                                    {
+                                        cout << "rshell: cd: " << argv[1]
+                                             << ": no such file or directory"
+                                             << endl;
+                                        token = strtok_r(NULL, del, &savptr1);
+                                        continue;
+                                    }
                                     token = strtok_r(NULL, del, &savptr1);
                                     continue;
                                 }
@@ -571,4 +595,4 @@ int main ()
 //BUGS:
 //cannot handle `~` being passed to cmd cd
 //cannot handle empty input -- FIXED
-//throws error on correct cds now... Need to fix
+//throws error on correct cds now... Need to fix -- Should be fixed
