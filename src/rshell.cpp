@@ -91,6 +91,7 @@ int find_execv(const char *path_find, char *const argv[])
             cout << "rshell91: " << token << ": command not found" << endl;
             return -1;
     }
+    return 1;
 }
 
 int new_proc(int in, int out, char ** cmd)
@@ -597,3 +598,9 @@ int main ()
 //cannot handle empty input -- FIXED
 //throws error on correct cds now... Need to fix -- Should be fixed
 //still has old connector bug with `&&`
+//Can only handle one level of rshell. Once you go two levels deep, cmds break
+//Can only go two levels into rshell.. But nothing works
+//Still cannot handle multiple pipes... But piping does still work with its 
+//limits... Same as before
+//echo $PATH literally echoes $PATH.... Fails
+//
