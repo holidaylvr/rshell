@@ -593,6 +593,7 @@ int main ()
 }
 
 //BUGS:
-//cannot handle `~` being passed to cmd cd
+//cannot handle `~` being passed to cmd cd 
 //cannot handle empty input -- FIXED
 //throws error on correct cds now... Need to fix -- Should be fixed
+//still has old connector bug with `&&`
