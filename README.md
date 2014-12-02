@@ -40,6 +40,7 @@ Timer.h
 ls.script
 exec.script
 pipe.script
+hw3.script
 ```
 
 About Program
@@ -56,6 +57,9 @@ UPDATE 11/20/14:
 RSHELL now has the ability to pipe and redirect commands! Just Like a real-life bash (with some limitations naturally). 
 
 for example, if the user enters 'cat < file | tr a-z A-Z | tee new | tr A-Z a-z > new2' RSHELL will redirect the input from 'file' to cat, which will then be piped to 'tr' which will be piped to tee, which creates a new file, and so on. I am sure you know what that command does and do not need me to walk you through it.
+
+UPDATE 12/2/2014
+RSHELL has had the execvp call replaced by execv. This means that $PATH is now manually parsed and searched when finding the location of cmds. Also, the `cd` functionality has been implemented manually to use chdir instead of bash`s built in cd.
 
 LS
 ------
@@ -134,6 +138,15 @@ UPDATED 11/20/14
 12. Sometimes randomly throughout code execution the program will create random files with pieces of names (ie: 'tr', 'a-z', 'echo'). I believe this bug is caused when a full command is invalid and it only executes partially.
 
 13. The previous RSHELL implemenatation was effected by the new version.. Still unsure as to the severity. (ie: 'echo hey && fart' executes when it should not).
+
+UPDATED 12/2/2014
+14. RSHELL can now only go two level deep. Once in the second level, functionality deminishes for reasons unknown. As long as RSHELL is only a single level deep functionality remains full.
+
+15. Cannot handle `~` being passed to cmd cd 
+
+16. `echo $PATH` literally echoes $PATH.... Fails
+
+17. All previous bugs still apply to this new version.
 
 LS
 -----
