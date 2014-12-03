@@ -88,7 +88,7 @@ int find_execv(const char *path_find, char *const argv[])
     //return -1 if path not found (error)
     if(flag == 0)
     {
-            cout << "rshell91: " << token << ": command not found" << endl;
+            cout << "rshell: " << token << ": command not found" << endl;
             return -1;
     }
     return 1;
@@ -113,7 +113,10 @@ int new_proc(int in, int out, char ** cmd)
                 perror("dup2 32");
                 exit(1);
             }
-            close(in); //close it. Copied to STDOUT
+            if(-1 == close(in))
+             {
+                perror("close:116");       
+             }//close it. Copied to STDOUT
         }
         if(out != 1) //
         {
@@ -122,7 +125,11 @@ int new_proc(int in, int out, char ** cmd)
                 perror("dup2 41");
                 exit(1);       
              }//we will write to pipe
-            close(out);//close it. Copied it to STDIN
+            if(-1 == close(out))
+            {
+                perror("close:125");
+                       
+            }//close it. Copied it to STDIN
         }
         if( -1 == find_execv(cmd[0], cmd))
         {
@@ -194,7 +201,11 @@ int fork_pipe(int n, vector<string> arg_list, vector<int> redir_flags)
                 perror("dup2 124");
                 exit(1);
             }
-            close(in);
+            if(-1 == close(in))
+            {
+                perror("close:201");
+                
+            }
         }
         else if(redir_flags.at(i) == 2)
         {
@@ -207,7 +218,8 @@ int fork_pipe(int n, vector<string> arg_list, vector<int> redir_flags)
         new_proc(in, fd[1], argv);
 
         //dont need to write to pipe, child does that
-        close(fd[1]);
+        if(-1 == close(fd[1]))
+                perror("close:221");
         //keep read end of pipe, next child will read from here
         in = fd[0];
 
@@ -261,7 +273,8 @@ int fork_pipe(int n, vector<string> arg_list, vector<int> redir_flags)
                 perror("dup2 208");
                 exit(1);
             }
-            close(in);
+            if(-1 == close(in))
+                perror("close:276");
         }
         if(redir_flags.at(n-1) == 2)
         {
@@ -277,7 +290,8 @@ int fork_pipe(int n, vector<string> arg_list, vector<int> redir_flags)
                 perror("dup2 226");
                 exit(1);
             }
-            close(in);
+            if(-1 == close(in))
+                perror("close:294");
         }
         if(redir_flags.at(0) == 0 && redir_flags.size() == 1)
         {
@@ -289,7 +303,8 @@ int fork_pipe(int n, vector<string> arg_list, vector<int> redir_flags)
                     exit(1);
                 
                 }
-                close(0);
+                if(-1 == close(0))
+                        perror("close:306");
                 if(-1 == dup2(in,0))
                 {
                     perror("dup2 247");
@@ -300,14 +315,16 @@ int fork_pipe(int n, vector<string> arg_list, vector<int> redir_flags)
             {
                 perror("open 254");
                 exit(1);
-                close(0);
+                if(-1 == close(0))
+                        perror("close:318");
                 if(-1 == dup2(in,0))
                 {
                     perror("dupe 168 ");
                     exit(1);
                 }
             }
-            close(0);
+            if(-1 == close(0))
+                    perror("close:326");
         }
 
         //execute last stage with current proc
@@ -473,7 +490,8 @@ int main ()
 
                                     //cout << "user supllied path" << endl;
                                     char cwdir[256];
-                                    getcwd(cwdir,sizeof(cwdir));
+                                    if(0 == getcwd(cwdir,sizeof(cwdir)))
+                                            perror("getcwd:492");
                                     //cout << "hey " << cwdir << endl;
                                     string full_path = cwdir;
                                     full_path += "/";
@@ -494,6 +512,7 @@ int main ()
                                              << ": no such file or directory"
                                              << endl;
                                         token = strtok_r(NULL, del, &savptr1);
+                                        perror("chdir:513");
                                         continue;
                                     }
                                     token = strtok_r(NULL, del, &savptr1);
