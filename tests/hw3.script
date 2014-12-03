@@ -1,0 +1,134 @@
+Script started on Tue 02 Dec 2014 06:54:58 PM PST
+~
+pstar001@hammer $ cs100
+[0;91m
+===============================================================================
+|                                                                             |
+| You have enabled settings specific for cs100.                               |
+|                                                                             |
+===============================================================================
+[0m
+[s%%%%%%%%%%[u[0;32mpstar001[0;36m@[0;32mcs100[0;36m:[0;32m~[0;95m [0;36m$[0m cd CS100/rshell/src
+[s%%%%%%%%%%[u[0;32mpstar001[0;36m@[0;32mcs100[0;36m:[0;32m~/CS100/rshell/src[0;95m (hw3) [0;36m$[0m ls[K[Kcd ..
+[s%%%%%%%%%%[u[0;32mpstar001[0;36m@[0;32mcs100[0;36m:[0;32m~/CS100/rshell[0;95m (hw3) [0;36m$[0m make
+([ ! -d bin/ ] && mkdir bin) || [ -d bin/ ] 
+g++  -W -Wall -Werror -ansi -pedantic  src/rshell.cpp -o bin/rshell
+([ ! -d bin/ ] && mkdir bin) || [ -d bin/ ]
+g++  -W -Wall -Werror -ansi -pedantic  src/cp.cpp -o bin/cp
+([ ! -d bin/ ] && mkdir bin) || [ -d bin/ ]
+g++  -W -Wall -Werror -ansi -pedantic  src/ls.cpp -o bin/ls
+[s%%%%%%%%%%[u[0;32mpstar001[0;36m@[0;32mcs100[0;36m:[0;32m~/CS100/rshell[0;95m (hw3) [0;36m$[0m cd src
+[s%%%%%%%%%%[u[0;32mpstar001[0;36m@[0;32mcs100[0;36m:[0;32m~/CS100/rshell/src[0;95m (hw3) [0;36m$[0m g++ rshell.cpp
+[s%%%%%%%%%%[u[0;32mpstar001[0;36m@[0;32mcs100[0;36m:[0;32m~/CS100/rshell/src[0;95m (hw3) [0;36m$[0m ./a.out
+/class/classes/pstar001/CS100/rshell/src$ ls
+a.out  cp.cpp  ls.cpp  main.cpp  rshell.cpp  TEST  Timer.h
+/class/classes/pstar001/CS100/rshell/src$ pwd
+/class/classes/pstar001/CS100/rshell/src
+/class/classes/pstar001/CS100/rshell/src$ cat
+ls
+ls
+hey
+hey
+in cat
+in cat
+^C
+/class/classes/pstar001/CS100/rshell/src$ ^C
+^C
+^C
+^C
+^C
+^C
+^C
+ls
+a.out  cp.cpp  ls.cpp  main.cpp  rshell.cpp  TEST  Timer.h
+/class/classes/pstar001/CS100/rshell/src$ ls -a -l
+total 148
+drwx------ 3 pstar001 classes  4096 Dec  2 18:54 .
+drwx------ 6 pstar001 classes  4096 Dec  2 11:38 ..
+-rwx------ 1 pstar001 classes 52460 Dec  2 18:54 a.out
+-rw------- 1 pstar001 classes  3168 Nov 11 23:55 cp.cpp
+-rw------- 1 pstar001 classes 25708 Nov 11 23:55 ls.cpp
+-rw------- 1 pstar001 classes 16384 Nov 25 15:47 .ls.cpp.swp
+-rw------- 1 pstar001 classes  6335 Oct 21 23:29 main.cpp
+-rw------- 1 pstar001 classes 21272 Dec  2 18:52 rshell.cpp
+drwx------ 2 pstar001 classes  4096 Nov 30 11:33 TEST
+-rw------- 1 pstar001 classes  2697 Nov 11 23:55 Timer.h
+/class/classes/pstar001/CS100/rshell/src$ whereis histrpy   ory
+history: /usr/share/man/mann/history.n.gz /usr/share/man/man3/history.3.gz /usr/share/man/man1/history.1.gz
+/class/classes/pstar001/CS100/rshell/src$ cd /usr/sa hare/man/mann
+/usr/share/man/mann$ ls
+after.n.gz	       auto_reset.n.gz	concat.n.gz    expr.n.gz	for.n.gz      join.n.gz     lreplace.n.gz   open.n.gz		  pwd.n.gz	  scan.n.gz	      tcl_findLibrary.n.gz	    tm.n.gz	   while.n.gz
+append.n.gz	       bgerror.n.gz	continue.n.gz  fblocked.n.gz	gets.n.gz     lappend.n.gz  lreverse.n.gz   package.n.gz	  read.n.gz	  seek.n.gz	      Tcl.n.gz			    trace.n.gz
+apply.n.gz	       binary.n.gz	dde.n.gz       fconfigure.n.gz	global.n.gz   lassign.n.gz  lsearch.n.gz    parray.n.gz		  refchan.n.gz	  set.n.gz	      tcl_startOfNextWord.n.gz	    unknown.n.gz
+array.n.gz	       break.n.gz	dict.n.gz      fcopy.n.gz	glob.n.gz     lindex.n.gz   lset.n.gz	    pid.n.gz		  regexp.n.gz	  socket.n.gz	      tcl_startOfPreviousWord.n.gz  unload.n.gz
+auto_execok.n.gz       case.n.gz	encoding.n.gz  fileevent.n.gz	history.n.gz  linsert.n.gz  lsort.n.gz	    pkg::create.n.gz	  registry.n.gz   source.n.gz	      tcltest.n.gz		    unset.n.gz
+auto_import.n.gz       catch.n.gz	eof.n.gz       filename.n.gz	http.n.gz     list.n.gz     mathfunc.n.gz   pkg_mkIndex.n.gz	  regsub.n.gz	  split.n.gz	      tclvars.n.gz		    update.n.gz
+auto_load.n.gz	       cd.n.gz		error.n.gz     file.n.gz	if.n.gz       llength.n.gz  mathop.n.gz     platform.n.gz	  rename.n.gz	  string.n.gz	      tcl_wordBreakAfter.n.gz	    uplevel.n.gz
+auto_mkindex.n.gz      chan.n.gz	eval.n.gz      flush.n.gz	incr.n.gz     load.n.gz     memory.n.gz     platform::shell.n.gz  re_syntax.n.gz  subst.n.gz	      tcl_wordBreakBefore.n.gz	    upvar.n.gz
+auto_mkindex_old.n.gz  clock.n.gz	exec.n.gz      foreach.n.gz	info.n.gz     lrange.n.gz   msgcat.n.gz     proc.n.gz		  return.n.gz	  switch.n.gz	      tell.n.gz			    variable.n.gz
+auto_qualify.n.gz      close.n.gz	exit.n.gz      format.n.gz	interp.n.gz   lrepeat.n.gz  namespace.n.gz  puts.n.gz		  SafeBase.n.gz   tcl_endOfWord.n.gz  time.n.gz			    vwait.n.gz
+/usr/share/man/mann$ ls -l history.g.gz^[[D^[[D^[[D                n.gz
+-r--r--r--. 1 root root 4017 Nov 11  2010 history.n.gz
+/usr/share/man/mann$ cd 
+/class/classes/pstar001$ cd .
+/class/classes/pstar001$ cd .
+/class/classes/pstar001$ cd fake
+rshell: cd: fake: no such file or directory
+/class/classes/pstar001$ cd CS100/rshell/src
+/class/classes/pstar001/CS100/rshell/src$ ls
+a.out  cp.cpp  ls.cpp  main.cpp  rshell.cpp  TEST  Timer.h
+/class/classes/pstar001/CS100/rshell/src$ cd ..
+/class/classes/pstar001/CS100/rshell$ pwd
+/class/classes/pstar001/CS100/rshell
+/class/classes/pstar001/CS100/rshell$ cd src
+/class/classes/pstar001/CS100/rshell/src$ cd../    ../../../
+/class/classes/pstar001$ ls
+CS100	    CS_14_Assignments  Cs 61 Assignments  Desktop    Downloads	      lab1.asm~  Music	   Public     ucr-cs100  WINDOWS	 Word Chapter 2
+CS 12 Labs  CS_14_Labs	       CS 61 Labs	  Documents  helloworld.asm~  Lab5~	 Pictures  Templates  Videos	 Word Chapter 1
+/class/classes/pstar001$ ^C
+^C
+
+/class/classes/pstar001$ cd    echo hey > new
+[s%%%%%%%%%%[u[0;32mpstar001[0;36m@[0;32mcs100[0;36m:[0;32m~/CS100/rshell/src[0;95m (hw3) [0;36m$[0m .a[K/a.out 
+/class/classes/pstar001/CS100/rshell/src$ cat e new
+cat: new: No such file or directory
+/class/classes/pstar001/CS100/rshell/src$ ls
+a.out  cp.cpp  ls.cpp  main.cpp  rshell.cpp  TEST  Timer.h
+/class/classes/pstar001/CS100/rshell/src$ echo hey > new
+[s%%%%%%%%%%[u[0;32mpstar001[0;36m@[0;32mcs100[0;36m:[0;32m~/CS100/rshell/src[0;95m (hw3) [0;36m$[0m ls
+a.out  cp.cpp  ls.cpp  main.cpp  new  rshell.cpp  TEST	Timer.h
+[s%%%%%%%%%%[u[0;32mpstar001[0;36m@[0;32mcs100[0;36m:[0;32m~/CS100/rshell/src[0;95m (hw3) [0;36m$[0m ./a.out 
+/class/classes/pstar001/CS100/rshell/src$ cat new
+hey
+/class/classes/pstar001/CS100/rshell/src$ echo >> new
+[s%%%%%%%%%%[u[0;32mpstar001[0;36m@[0;32mcs100[0;36m:[0;32m~/CS100/rshell/src[0;95m (hw3) [0;36m$[0m ,[K\[K.a/[K[K/a.out 
+/class/classes/pstar001/CS100/rshell/src$ cat new       echo fat >> new
+[s%%%%%%%%%%[u[0;32mpstar001[0;36m@[0;32mcs100[0;36m:[0;32m~/CS100/rshell/src[0;95m (hw3) [0;36m$[0m ./a.out 
+/class/classes/pstar001/CS100/rshell/src$ cat new
+hey
+
+fat
+/class/classes/pstar001/CS100/rshell/src$ rm new
+/class/classes/pstar001/CS100/rshell/src$ ls
+a.out  cp.cpp  ls.cpp  main.cpp  rshell.cpp  TEST  Timer.h
+/class/classes/pstar001/CS100/rshell/src$ cat rshell.cpp | f grep execv
+//my own function that uses execv and manually searches for proper path
+int find_execv(const char *path_find, char *const argv[])
+                //adding necessary mods to provide execv with FULL directory
+                if(-1 == execv(f_path.c_str(), argv))
+                    perror("execv:50");
+        if( -1 == find_execv(cmd[0], cmd))
+                perror("find_execv:110");
+        if(-1 == find_execv(argv[0], argv))
+            perror("find_execv:299");
+                            //loop to get parsed data into array for find_execv
+                                    //own execv function to man search PATH
+                                    if(-1 == find_execv(argv[0], argv))
+                                        perror("find_execv:509");
+[s%%%%%%%%%%[u[0;32mpstar001[0;36m@[0;32mcs100[0;36m:[0;32m~/CS100/rshell/src[0;95m (hw3) [0;36m$[0m exit
+exit
+~
+pstar001@hammer $ exit
+exit
+
+Script done on Tue 02 Dec 2014 06:59:37 PM PST
